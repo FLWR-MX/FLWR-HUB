@@ -4,57 +4,808 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FLWR Membership</title>
+<title>FLWR — Official</title>
+
+<meta name="description" content="FLWR — Flowers, culture & limited drops.">
 
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    background: #000;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.card {
-    position: relative;
-    width: 100%;
-    max-width: 1536px;
-    margin: 0 auto;
+html{
+    scroll-behavior:smooth;
 }
 
-.card img {
-    width: 100%;
-    height: auto;
-    display: block;
+body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow-x:hidden;
 }
 
-.points {
-    position: absolute;
-    left: 64.5%;
-    top: 70%;
-    width: 25%;
+/* =========================
+   INTRO
+========================= */
 
-    transform: translate(-50%, -50%);
-
-    color: white;
-    font-family: Arial, sans-serif;
-    font-size: 4.5vw;
-    font-weight: 500;
-
-    text-align: center;
-    letter-spacing: 2px;
-    white-space: nowrap;
+#intro{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:#050505;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:opacity .8s ease, visibility .8s ease;
 }
+
+#intro.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+
+.start{
+    text-align:center;
+}
+
+.start-logo{
+    width:min(80vw,520px);
+    margin-bottom:45px;
+}
+
+.start-button{
+    font-size:14px;
+    letter-spacing:5px;
+    border:1px solid #fff;
+    padding:17px 28px;
+    display:inline-block;
+    transition:.3s;
+}
+
+.start-button:hover{
+    background:#fff;
+    color:#000;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:25px 35px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    z-index:100;
+    mix-blend-mode:difference;
+}
+
+.logo-small{
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+nav{
+    display:flex;
+    gap:28px;
+}
+
+nav a{
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    letter-spacing:2px;
+    transition:.3s;
+}
+
+nav a:hover{
+    opacity:.45;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:100px 20px;
+    position:relative;
+}
+
+.hero-content{
+    width:100%;
+    max-width:1200px;
+    text-align:center;
+}
+
+.logo-main{
+    width:min(90vw,1000px);
+    height:auto;
+    margin:auto;
+    display:block;
+}
+
+/* subtle movement */
+
+.logo-main{
+    animation:float 6s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+}
+
+.hero-sub{
+    margin-top:40px;
+    font-size:11px;
+    letter-spacing:6px;
+    opacity:.55;
+}
+
+/* =========================
+   MARQUEE
+========================= */
+
+.marquee{
+    width:100%;
+    overflow:hidden;
+    border-top:1px solid #222;
+    border-bottom:1px solid #222;
+    padding:15px 0;
+    white-space:nowrap;
+}
+
+.marquee-track{
+    display:inline-block;
+    animation:marquee 20s linear infinite;
+}
+
+.marquee span{
+    font-size:12px;
+    letter-spacing:5px;
+    margin-right:45px;
+}
+
+@keyframes marquee{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+section{
+    padding:140px 7vw;
+}
+
+.section-title{
+    font-size:clamp(55px,10vw,150px);
+    font-weight:900;
+    letter-spacing:-8px;
+    line-height:.8;
+    margin-bottom:70px;
+}
+
+/* =========================
+   DROP
+========================= */
+
+.drop{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+
+.card{
+    border:1px solid #222;
+    min-height:500px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:30px;
+    transition:.4s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card:hover{
+    border-color:#777;
+    transform:translateY(-5px);
+}
+
+.card-number{
+    font-size:12px;
+    letter-spacing:3px;
+    opacity:.5;
+}
+
+.card-logo{
+    font-size:clamp(70px,10vw,150px);
+    font-weight:900;
+    letter-spacing:-9px;
+    line-height:.8;
+}
+
+.card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+}
+
+.card-name{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.card-price{
+    font-size:12px;
+    letter-spacing:2px;
+}
+
+/* =========================
+   MANIFESTO
+========================= */
+
+.manifesto{
+    border-top:1px solid #222;
+    border-bottom:1px solid #222;
+}
+
+.manifesto-text{
+    max-width:1100px;
+    font-size:clamp(30px,5vw,75px);
+    font-weight:700;
+    letter-spacing:-3px;
+    line-height:1;
+}
+
+/* =========================
+   CTA
+========================= */
+
+.cta{
+    text-align:center;
+}
+
+.cta h2{
+    font-size:clamp(60px,13vw,180px);
+    letter-spacing:-10px;
+    line-height:.8;
+    margin-bottom:60px;
+}
+
+.button{
+    display:inline-block;
+    border:1px solid #fff;
+    color:#fff;
+    text-decoration:none;
+    padding:20px 35px;
+    font-size:12px;
+    letter-spacing:4px;
+    transition:.3s;
+}
+
+.button:hover{
+    background:#fff;
+    color:#000;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    border-top:1px solid #222;
+    padding:30px 35px;
+    display:flex;
+    justify-content:space-between;
+    font-size:10px;
+    letter-spacing:2px;
+    opacity:.55;
+}
+
+.socials{
+    display:flex;
+    gap:25px;
+}
+
+.socials a{
+    color:#fff;
+    text-decoration:none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    header{
+        padding:20px;
+    }
+
+    nav{
+        gap:12px;
+    }
+
+    nav a{
+        font-size:9px;
+        letter-spacing:1px;
+    }
+
+    .hero{
+        padding:100px 15px;
+    }
+
+    section{
+        padding:100px 20px;
+    }
+
+    .section-title{
+        letter-spacing:-4px;
+    }
+
+    .drop{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        min-height:380px;
+    }
+
+    .manifesto-text{
+        letter-spacing:-1px;
+    }
+
+    .cta h2{
+        letter-spacing:-5px;
+    }
+
+    footer{
+        padding:25px 20px;
+        flex-direction:column;
+        gap:20px;
+    }
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<!-- =========================
+     INTRO
+========================= -->
 
-    <img src="1DB8D572-99C1-468A-A693-A4BEB57A77F6.jpeg" alt="FLWR Membership">
+<div id="intro">
 
-    <div class="points">00420</div>
+    <div class="start">
+
+        <!-- MINI LOGO -->
+        <svg class="start-logo"
+             viewBox="0 0 1000 700"
+             xmlns="http://www.w3.org/2000/svg">
+
+            <rect width="1000" height="700" fill="#050505"/>
+
+            <!-- FLWR -->
+            <text x="500"
+                  y="250"
+                  text-anchor="middle"
+                  fill="white"
+                  font-family="Arial, Helvetica, sans-serif"
+                  font-size="210"
+                  font-weight="900"
+                  letter-spacing="-12">
+                FLWR
+            </text>
+
+            <!-- FLOWER -->
+            <g fill="none"
+               stroke="white"
+               stroke-width="18"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+
+                <path d="
+                M500 365
+                C430 290 330 315 315 385
+                C250 340 170 385 195 455
+                C125 485 155 570 235 560
+                C220 640 315 665 365 605
+                C420 670 515 635 510 555
+                C590 595 670 530 630 470
+                C700 430 650 345 570 370
+                C560 300 475 300 455 350
+                "/>
+
+                <ellipse cx="470"
+                         cy="450"
+                         rx="130"
+                         ry="55"
+                         transform="rotate(-15 470 450)"/>
+
+                <path d="M500 500 C505 570 500 625 520 670"/>
+
+                <path d="M510 590 C560 550 600 570 615 600"/>
+
+                <path d="M505 620 C455 590 420 620 420 650"/>
+
+                <path d="M440 430 C470 445 500 445 525 430"/>
+
+                <path d="M485 390 L480 450"/>
+
+            </g>
+
+        </svg>
+
+        <div class="start-button">
+            PRESS START
+        </div>
+
+    </div>
 
 </div>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="logo-small">FLWR®</div>
+
+    <nav>
+        <a href="#home">HOME</a>
+        <a href="#drop">DROP</a>
+        <a href="#about">ABOUT</a>
+        <a href="#contact">CONTACT</a>
+    </nav>
+
+</header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<main id="home">
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <!-- YOUR LOGO -->
+        <svg class="logo-main"
+             viewBox="0 0 1000 700"
+             xmlns="http://www.w3.org/2000/svg">
+
+            <text x="500"
+                  y="250"
+                  text-anchor="middle"
+                  fill="white"
+                  font-family="Arial, Helvetica, sans-serif"
+                  font-size="210"
+                  font-weight="900"
+                  letter-spacing="-12">
+                FLWR
+            </text>
+
+            <!-- HAND DRAWN FLOWER -->
+
+            <g fill="none"
+               stroke="white"
+               stroke-width="18"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+
+                <!-- petals -->
+                <path d="
+                M500 365
+                C430 290 330 315 315 385
+                C250 340 170 385 195 455
+                C125 485 155 570 235 560
+                C220 640 315 665 365 605
+                C420 670 515 635 510 555
+                C590 595 670 530 630 470
+                C700 430 650 345 570 370
+                C560 300 475 300 455 350
+                "/>
+
+                <!-- center -->
+                <ellipse cx="470"
+                         cy="450"
+                         rx="130"
+                         ry="55"
+                         transform="rotate(-15 470 450)"/>
+
+                <!-- center details -->
+                <path d="M410 445 C435 460 465 460 490 447"/>
+                <path d="M485 390 L480 450"/>
+                <path d="M445 400 L520 410"/>
+
+                <!-- stem -->
+                <path d="M500 500 C505 570 500 625 520 670"/>
+
+                <!-- leaves -->
+                <path d="M510 590 C560 550 600 570 615 600"/>
+                <path d="M505 620 C455 590 420 620 420 650"/>
+
+            </g>
+
+        </svg>
+
+        <div class="hero-sub">
+            FLOWERS · CULTURE · OBJECTS · COMMUNITY
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MARQUEE
+========================= -->
+
+<div class="marquee">
+
+    <div class="marquee-track">
+
+        <span>FLWR</span>
+        <span>EST. 2026</span>
+        <span>LIMITED DROPS</span>
+        <span>FLWR</span>
+        <span>EST. 2026</span>
+        <span>LIMITED DROPS</span>
+
+        <span>FLWR</span>
+        <span>EST. 2026</span>
+        <span>LIMITED DROPS</span>
+        <span>FLWR</span>
+        <span>EST. 2026</span>
+        <span>LIMITED DROPS</span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     DROP
+========================= -->
+
+<section id="drop">
+
+    <h2 class="section-title">
+        THE<br>
+        DROP.
+    </h2>
+
+    <div class="drop">
+
+        <div class="card">
+
+            <div class="card-number">
+                001 / FLWR
+            </div>
+
+            <div class="card-logo">
+                FLWR
+            </div>
+
+            <div class="card-bottom">
+
+                <div class="card-name">
+                    FLWR OBJECT 001
+                </div>
+
+                <div class="card-price">
+                    COMING SOON
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-number">
+                002 / FLOWER
+            </div>
+
+            <div class="card-logo">
+
+                <svg viewBox="0 0 300 300"
+                     width="100%"
+                     height="220">
+
+                    <g fill="none"
+                       stroke="white"
+                       stroke-width="10"
+                       stroke-linecap="round">
+
+                        <circle cx="150"
+                                cy="110"
+                                r="50"/>
+
+                        <path d="
+                        M150 60
+                        C120 10 55 30 70 90
+                        C15 70 0 130 50 155
+                        C15 190 70 235 110 200
+                        C125 260 190 255 195 200
+                        C245 230 285 180 245 145
+                        C290 105 235 60 195 85
+                        C185 30 145 25 150 60
+                        "/>
+
+                        <path d="M150 160 C150 210 155 245 155 280"/>
+
+                    </g>
+
+                </svg>
+
+            </div>
+
+            <div class="card-bottom">
+
+                <div class="card-name">
+                    FLOWER SERIES
+                </div>
+
+                <div class="card-price">
+                    SOON
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     ABOUT
+========================= -->
+
+<section id="about" class="manifesto">
+
+    <h2 class="section-title">
+        ABOUT.
+    </h2>
+
+    <div class="manifesto-text">
+
+        FLWR IS AN INDEPENDENT
+        CREATIVE PROJECT BUILT
+        AROUND FLOWERS, CULTURE,
+        OBJECTS AND COMMUNITY.
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CTA
+========================= -->
+
+<section id="contact" class="cta">
+
+    <h2>
+        STAY<br>
+        CLOSE.
+    </h2>
+
+    <a class="button"
+       href="mailto:hola@flwr.com">
+
+        CONTACT FLWR
+
+    </a>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div>
+        © 2026 FLWR®
+    </div>
+
+    <div class="socials">
+
+        <a href="#" target="_blank">
+            INSTAGRAM
+        </a>
+
+        <a href="#" target="_blank">
+            TIKTOK
+        </a>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+const intro = document.getElementById("intro");
+
+intro.addEventListener("click", function(){
+
+    intro.classList.add("hide");
+
+    document.body.style.overflow = "auto";
+
+});
+
+document.body.style.overflow = "hidden";
+
+
+/* smooth navigation */
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+
+    link.addEventListener("click", function(e){
+
+        const target = document.querySelector(
+            this.getAttribute("href")
+        );
+
+        if(target){
+
+            e.preventDefault();
+
+            target.scrollIntoView({
+                behavior:"smooth"
+            });
+
+        }
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>
