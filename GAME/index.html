@@ -2,198 +2,341 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 
-<title>FLWR GARDEN — Plants vs Plagues</title>
+<title>FLWR INVADERS</title>
 
 <style>
 
 *{
     box-sizing:border-box;
-    user-select:none;
+    margin:0;
+    padding:0;
 }
 
 html,body{
-    margin:0;
-    padding:0;
     width:100%;
-    min-height:100%;
-    background:#111;
-    color:#fff;
-    font-family:Georgia, "Times New Roman", serif;
+    height:100%;
+    overflow:hidden;
 }
 
 body{
+    background:#111;
+    font-family:Arial,Helvetica,sans-serif;
     display:flex;
     justify-content:center;
-    padding:18px;
-}
-
-.game{
-    width:min(1100px,100%);
-}
-
-/* HEADER */
-
-header{
-    display:flex;
     align-items:center;
+    color:#111;
+}
+
+/* =========================================
+   CONTENEDOR
+========================================= */
+
+#gameWrap{
+    position:relative;
+    width:min(100vw,1000px);
+    height:min(100vh,760px);
+    overflow:hidden;
+    background:#eee8d9;
+    border:5px solid #111;
+    box-shadow:
+        0 0 0 2px #eee8d9,
+        0 12px 40px rgba(0,0,0,.55);
+}
+
+/* =========================================
+   CANVAS
+========================================= */
+
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    touch-action:none;
+}
+
+/* =========================================
+   HUD
+========================================= */
+
+#hud{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:78px;
+
+    display:flex;
     justify-content:space-between;
-    border-bottom:3px solid white;
-    padding:10px 4px 14px;
-    margin-bottom:12px;
+    align-items:center;
+
+    padding:12px 18px;
+
+    pointer-events:none;
+    z-index:5;
+
+    background:
+        linear-gradient(
+            rgba(238,232,217,.94),
+            rgba(238,232,217,.82)
+        );
+
+    border-bottom:3px solid #111;
 }
 
 .logo{
-    font-family:Arial Black, Impact, sans-serif;
-    font-size:clamp(30px,7vw,65px);
-    letter-spacing:-5px;
+    font-size:27px;
+    font-weight:1000;
+    letter-spacing:5px;
 }
 
-.logo span{
-    display:block;
-    font-family:Georgia,serif;
-    font-size:11px;
-    letter-spacing:5px;
-    margin-top:-5px;
+.subtitle{
+    font-size:9px;
+    letter-spacing:3px;
+    margin-top:3px;
 }
 
 .stats{
     display:flex;
     gap:20px;
-    text-align:center;
+    align-items:center;
+    font-weight:900;
+    font-size:13px;
+    letter-spacing:1px;
 }
 
 .stat{
-    min-width:80px;
+    text-align:center;
 }
 
 .stat small{
     display:block;
-    font-size:10px;
+    font-size:8px;
     letter-spacing:2px;
 }
 
-.stat strong{
-    font-size:25px;
-}
+/* =========================================
+   BOTONES
+========================================= */
 
-/* GAME */
+#pauseBtn{
+    position:absolute;
+    right:15px;
+    top:88px;
 
-.gamebox{
-    border:4px solid white;
-    background:#f5f1e7;
-    position:relative;
-    overflow:hidden;
-}
+    z-index:10;
 
-canvas{
-    display:block;
-    width:100%;
-    height:auto;
-    background:#f5f1e7;
-}
+    background:#eee8d9;
+    border:3px solid #111;
 
-/* CONTROLS */
+    padding:8px 12px;
 
-.controls{
-    display:flex;
-    gap:8px;
-    margin-top:10px;
-    flex-wrap:wrap;
-}
-
-button{
-    border:3px solid white;
-    background:#111;
-    color:white;
-    padding:10px 16px;
-    font-family:Georgia,serif;
-    font-weight:bold;
+    font-weight:900;
     cursor:pointer;
+
+    box-shadow:3px 3px 0 #111;
 }
 
-button:hover{
-    background:white;
-    color:#111;
+#pauseBtn:active{
+    transform:translate(3px,3px);
+    box-shadow:none;
 }
 
-.cards{
+/* =========================================
+   OVERLAY
+========================================= */
+
+.overlay{
+    position:absolute;
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(238,232,217,.88),
+            rgba(238,232,217,.96)
+        );
+
     display:flex;
-    gap:8px;
-    margin-top:10px;
-    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+
+    z-index:20;
 }
 
-.card{
-    width:100px;
-    min-height:85px;
-    border:3px solid white;
-    background:#111;
-    color:white;
-    padding:7px;
+.panel{
+    width:min(88%,600px);
+
     text-align:center;
+
+    border:5px solid #111;
+
+    padding:40px 25px;
+
+    background:#eee8d9;
+
+    box-shadow:
+        10px 10px 0 #111;
+}
+
+.panel h1{
+    font-size:clamp(38px,8vw,76px);
+    letter-spacing:5px;
+    line-height:.9;
+    margin-bottom:15px;
+}
+
+.panel h2{
+    font-size:15px;
+    letter-spacing:4px;
+    margin-bottom:25px;
+}
+
+.panel p{
+    font-size:12px;
+    line-height:1.7;
+    margin-bottom:25px;
+}
+
+.startBtn{
+    border:4px solid #111;
+    background:#111;
+    color:#eee8d9;
+
+    padding:14px 28px;
+
+    font-weight:1000;
+    letter-spacing:3px;
+
     cursor:pointer;
+
+    box-shadow:6px 6px 0 #777;
 }
 
-.card.selected{
-    background:white;
-    color:#111;
+.startBtn:active{
+    transform:translate(6px,6px);
+    box-shadow:none;
 }
 
-.card.disabled{
-    opacity:.35;
+/* =========================================
+   CONTROLES MOVIL
+========================================= */
+
+#mobileControls{
+    position:absolute;
+
+    bottom:18px;
+    left:18px;
+    right:18px;
+
+    display:flex;
+    justify-content:space-between;
+
+    z-index:8;
+
+    pointer-events:none;
 }
 
-.card .plant-icon{
-    font-size:28px;
+.controlGroup{
+    display:flex;
+    gap:10px;
 }
 
-.card b{
-    display:block;
-    font-size:12px;
+.mobileBtn{
+    pointer-events:auto;
+
+    width:58px;
+    height:52px;
+
+    border:3px solid #111;
+
+    background:rgba(238,232,217,.82);
+
+    font-size:20px;
+    font-weight:900;
+
+    box-shadow:4px 4px 0 #111;
+
+    user-select:none;
+    -webkit-user-select:none;
 }
 
-.card small{
-    font-size:10px;
+.mobileBtn:active{
+    transform:translate(4px,4px);
+    box-shadow:none;
 }
 
-.instructions{
-    margin-top:12px;
-    font-size:12px;
-    opacity:.8;
-    line-height:1.5;
+#fireBtn{
+    width:85px;
+    font-size:13px;
+    letter-spacing:2px;
 }
 
-/* MOBILE */
+/* =========================================
+   AYUDA
+========================================= */
 
-@media(max-width:600px){
+.help{
+    position:absolute;
 
-    body{
-        padding:8px;
+    bottom:7px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:8px;
+    letter-spacing:2px;
+
+    opacity:.65;
+
+    pointer-events:none;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:650px){
+
+    #gameWrap{
+        width:100vw;
+        height:100vh;
+
+        border:0;
     }
 
-    .stats{
-        gap:7px;
-    }
-
-    .stat{
-        min-width:55px;
-    }
-
-    .stat strong{
-        font-size:18px;
+    #hud{
+        height:68px;
+        padding:9px 12px;
     }
 
     .logo{
-        font-size:36px;
+        font-size:20px;
+        letter-spacing:3px;
     }
 
-    .card{
-        width:calc(25% - 6px);
-        min-width:72px;
+    .subtitle{
+        font-size:7px;
     }
 
+    .stats{
+        gap:9px;
+        font-size:10px;
+    }
+
+    #pauseBtn{
+        top:77px;
+        right:10px;
+    }
+
+    .panel{
+        box-shadow:7px 7px 0 #111;
+    }
+
+    .help{
+        display:none;
+    }
 }
 
 </style>
@@ -201,1488 +344,955 @@ button:hover{
 
 <body>
 
-<div class="game">
+<div id="gameWrap">
 
-<header>
+<canvas id="game"></canvas>
 
-    <div class="logo">
-        FLWR
-        <span>GARDEN / PLANTS VS PLAGUES</span>
+<div id="hud">
+
+    <div>
+        <div class="logo">FLWR</div>
+        <div class="subtitle">INVADERS // GARDEN DEFENSE</div>
     </div>
 
     <div class="stats">
 
         <div class="stat">
-            <small>ENERGY</small>
-            <strong id="energy">100</strong>
-        </div>
-
-        <div class="stat">
             <small>SCORE</small>
-            <strong id="score">0</strong>
+            <span id="score">000000</span>
         </div>
 
         <div class="stat">
             <small>WAVE</small>
-            <strong id="wave">1</strong>
+            <span id="wave">01</span>
+        </div>
+
+        <div class="stat">
+            <small>LIVES</small>
+            <span id="lives">03</span>
         </div>
 
     </div>
 
-</header>
-
-
-<div class="gamebox">
-
-<canvas id="game" width="1100" height="650"></canvas>
-
 </div>
 
+<button id="pauseBtn">Ⅱ</button>
 
-<div class="cards">
+<div id="mobileControls">
 
-    <div class="card selected" data-type="flower">
-        <div class="plant-icon">✿</div>
-        <b>FLWR</b>
-        <small>50 EN</small>
+    <div class="controlGroup">
+
+        <button class="mobileBtn" id="leftBtn">←</button>
+
+        <button class="mobileBtn" id="rightBtn">→</button>
+
     </div>
 
-    <div class="card" data-type="cactus">
-        <div class="plant-icon">♣</div>
-        <b>CACTUS</b>
-        <small>75 EN</small>
+    <button class="mobileBtn" id="fireBtn">
+        FIRE
+    </button>
+
+</div>
+
+<div class="help">
+    ← → MOVER &nbsp;&nbsp; SPACE DISPARAR &nbsp;&nbsp; P PAUSA
+</div>
+
+<div class="overlay" id="startOverlay">
+
+    <div class="panel">
+
+        <h1>FLWR<br>INVADERS</h1>
+
+        <h2>THE GARDEN STRIKES BACK</h2>
+
+        <p>
+            Defiende tu jardín contra la invasión.
+            <br>
+            Muévete, dispara y sobrevive a las oleadas.
+        </p>
+
+        <button class="startBtn" id="startBtn">
+            START GAME
+        </button>
+
     </div>
 
-    <div class="card" data-type="mushroom">
-        <div class="plant-icon">♠</div>
-        <b>MUSH</b>
-        <small>100 EN</small>
+</div>
+
+<div class="overlay" id="gameOverOverlay" style="display:none">
+
+    <div class="panel">
+
+        <h1>GAME<br>OVER</h1>
+
+        <h2 id="finalScore">
+            SCORE 000000
+        </h2>
+
+        <p>
+            El jardín ha caído...
+            <br>
+            Pero las flores siempre vuelven.
+        </p>
+
+        <button class="startBtn" id="restartBtn">
+            TRY AGAIN
+        </button>
+
     </div>
 
-    <div class="card" data-type="thorn">
-        <div class="plant-icon">✦</div>
-        <b>THORN</b>
-        <small>125 EN</small>
+</div>
+
+<div class="overlay" id="pauseOverlay" style="display:none">
+
+    <div class="panel">
+
+        <h1>PAUSED</h1>
+
+        <p>
+            El jardín necesita un descanso.
+        </p>
+
+        <button class="startBtn" id="resumeBtn">
+            CONTINUE
+        </button>
+
     </div>
 
 </div>
 
-
-<div class="controls">
-
-    <button id="startBtn">START GARDEN</button>
-    <button id="pauseBtn">PAUSE</button>
-    <button id="restartBtn">RESTART</button>
-
 </div>
-
-
-<div class="instructions">
-
-<b>Cómo jugar:</b><br>
-
-Selecciona una planta y después haz clic/toca un cuadro del jardín.
-Las plantas atacarán automáticamente a las plagas que estén en su carril.
-
-En computadora:
-<strong>1–4</strong> seleccionan plantas.
-<strong>ESC</strong> pausa el juego.
-
-En celular:
-toca una planta y después toca el jardín.
-
-¡No dejes que las plagas lleguen al final!
-
-</div>
-
-</div>
-
 
 <script>
 
 /* ============================================================
-   FLWR GARDEN
-   PLANTS VS PLAGUES
-   ORIGINAL SINGLE-FILE GAME
-   ============================================================ */
+   FLWR INVADERS V2
+   SINGLE FILE GAME
+============================================================ */
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const W = canvas.width;
-const H = canvas.height;
+let W = 900;
+let H = 700;
 
+function resize(){
 
-/* ============================================================
-   GAME VARIABLES
-   ============================================================ */
+    const rect = canvas.getBoundingClientRect();
 
-const lanes = 5;
+    const dpr = Math.min(window.devicePixelRatio || 1,2);
 
-const laneHeight = 100;
+    canvas.width = rect.width*dpr;
+    canvas.height = rect.height*dpr;
 
-const gardenX = 100;
+    ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
 
-const gardenY = 90;
+    W = rect.width;
+    H = rect.height;
+}
 
-const gardenWidth = 900;
+window.addEventListener("resize",resize);
 
-const gardenHeight = 500;
-
-const cellWidth = gardenWidth / 9;
-
-let energy = 100;
-
-let score = 0;
-
-let wave = 1;
-
-let running = false;
-
-let paused = false;
-
-let gameOver = false;
-
-let selectedPlant = "flower";
-
-let spawnTimer = 0;
-
-let energyTimer = 0;
-
-let waveTimer = 0;
-
-let lastTime = 0;
-
-let shake = 0;
-
-let plants = [];
-
-let enemies = [];
-
-let projectiles = [];
-
-let particles = [];
-
+resize();
 
 /* ============================================================
-   PLANT TYPES
-   ============================================================ */
+   VARIABLES
+============================================================ */
 
-const plantTypes = {
+let running=false;
+let paused=false;
 
-    flower:{
-        cost:50,
-        hp:120,
-        damage:18,
-        fireRate:900,
-        speed:4,
-        name:"FLWR"
-    },
+let score=0;
+let lives=3;
+let wave=1;
 
-    cactus:{
-        cost:75,
-        hp:170,
-        damage:35,
-        fireRate:1300,
-        speed:5,
-        name:"CACTUS"
-    },
+let player;
 
-    mushroom:{
-        cost:100,
-        hp:100,
-        damage:55,
-        fireRate:1800,
-        speed:3,
-        name:"MUSH"
-    },
+let enemies=[];
+let bullets=[];
+let enemyBullets=[];
+let particles=[];
+let stars=[];
 
-    thorn:{
-        cost:125,
-        hp:250,
-        damage:80,
-        fireRate:2200,
-        speed:6,
-        name:"THORN"
-    }
+let enemyDirection=1;
+let enemyDrop=0;
 
+let spawnTimer=0;
+let shootTimer=0;
+
+let lastTime=0;
+
+let shake=0;
+
+const keys={
+    left:false,
+    right:false,
+    fire:false
 };
 
-
 /* ============================================================
-   ENEMY TYPES
-   ============================================================ */
+   UTILIDADES
+============================================================ */
 
-const enemyTypes = [
-
-    {
-        name:"APHID",
-        hp:80,
-        speed:.22,
-        damage:10,
-        reward:50
-    },
-
-    {
-        name:"BEETLE",
-        hp:150,
-        speed:.16,
-        damage:16,
-        reward:90
-    },
-
-    {
-        name:"CATERPILLAR",
-        hp:240,
-        speed:.10,
-        damage:25,
-        reward:150
-    },
-
-    {
-        name:"FLY",
-        hp:65,
-        speed:.35,
-        damage:8,
-        reward:40
-    }
-
-];
-
-
-/* ============================================================
-   UTILITY
-   ============================================================ */
-
-function random(min,max){
+function rand(min,max){
     return Math.random()*(max-min)+min;
 }
 
-function laneY(lane){
-    return gardenY + lane*laneHeight + laneHeight/2;
+function clamp(v,min,max){
+    return Math.max(min,Math.min(max,v));
 }
 
-function updateUI(){
+function rectHit(a,b){
 
-    document.getElementById("energy").textContent =
-        Math.floor(energy);
-
-    document.getElementById("score").textContent =
-        score;
-
-    document.getElementById("wave").textContent =
-        wave;
-
+    return(
+        a.x < b.x+b.w &&
+        a.x+a.w > b.x &&
+        a.y < b.y+b.h &&
+        a.y+a.h > b.y
+    );
 }
-
 
 /* ============================================================
-   DRAW BACKGROUND
-   ============================================================ */
+   PAPEL / TEXTURA
+============================================================ */
 
 function drawBackground(){
 
-    ctx.fillStyle="#f5f1e7";
+    ctx.fillStyle="#eee8d9";
 
     ctx.fillRect(0,0,W,H);
 
+    /* franjas verticales */
 
-    /* vintage paper noise */
+    ctx.save();
 
-    for(let i=0;i<500;i++){
+    ctx.globalAlpha=.055;
 
-        let x=Math.random()*W;
-        let y=Math.random()*H;
+    for(let x=0;x<W;x+=9){
 
-        ctx.fillStyle =
-            Math.random()>.5
-            ? "rgba(0,0,0,.025)"
-            : "rgba(255,255,255,.05)";
+        ctx.fillStyle="#111";
 
-        ctx.fillRect(x,y,2,2);
-
+        ctx.fillRect(
+            x,
+            0,
+            1,
+            H
+        );
     }
 
+    ctx.restore();
 
-    /* SUN */
+    /* manchas */
 
-    ctx.fillStyle="#111";
+    ctx.save();
 
-    ctx.font="bold 18px Georgia";
+    ctx.globalAlpha=.035;
 
-    ctx.fillText("THE FLWR GARDEN",40,45);
+    for(let i=0;i<180;i++){
 
-    ctx.font="12px Georgia";
+        const x=Math.random()*W;
+        const y=Math.random()*H;
+        const r=Math.random()*2;
 
-    ctx.fillText(
-        "KEEP THE PESTS OUT",
-        W-180,
-        45
-    );
-
-
-    /* garden */
-
-    ctx.strokeStyle="#111";
-
-    ctx.lineWidth=4;
-
-    ctx.strokeRect(
-        gardenX,
-        gardenY,
-        gardenWidth,
-        gardenHeight
-    );
-
-
-    /* lanes */
-
-    ctx.lineWidth=1;
-
-    for(let i=1;i<lanes;i++){
-
-        let y=gardenY+i*laneHeight;
+        ctx.fillStyle="#111";
 
         ctx.beginPath();
 
-        ctx.moveTo(gardenX,y);
+        ctx.arc(
+            x,
+            y,
+            r,
+            0,
+            Math.PI*2
+        );
 
-        ctx.lineTo(gardenX+gardenWidth,y);
+        ctx.fill();
+    }
+
+    ctx.restore();
+
+    /* líneas de impresión */
+
+    ctx.save();
+
+    ctx.globalAlpha=.035;
+
+    ctx.strokeStyle="#111";
+
+    ctx.lineWidth=1;
+
+    for(let y=100;y<H;y+=35){
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,y+Math.sin(y)*2);
+
+        ctx.lineTo(W,y+Math.sin(y)*2);
 
         ctx.stroke();
 
     }
 
-
-    /* cells */
-
-    for(let x=0;x<9;x++){
-
-        for(let y=0;y<5;y++){
-
-            let xx=gardenX+x*cellWidth;
-
-            let yy=gardenY+y*laneHeight;
-
-            ctx.strokeStyle="rgba(0,0,0,.12)";
-
-            ctx.strokeRect(
-                xx,
-                yy,
-                cellWidth,
-                laneHeight
-            );
-
-        }
-
-    }
-
-
-    /* left garden gate */
-
-    ctx.strokeStyle="#111";
-
-    ctx.lineWidth=5;
-
-    ctx.beginPath();
-
-    ctx.moveTo(55,gardenY);
-
-    ctx.lineTo(55,gardenY+gardenHeight);
-
-    ctx.stroke();
-
-
-    /* right danger area */
-
-    ctx.save();
-
-    ctx.globalAlpha=.08;
-
-    ctx.fillStyle="#111";
-
-    ctx.fillRect(
-        gardenX+gardenWidth-65,
-        gardenY,
-        65,
-        gardenHeight
-    );
-
     ctx.restore();
-
-
-    ctx.save();
-
-    ctx.translate(
-        gardenX+gardenWidth+30,
-        gardenY+gardenHeight/2
-    );
-
-    ctx.rotate(Math.PI/2);
-
-    ctx.font="bold 14px Georgia";
-
-    ctx.fillStyle="#111";
-
-    ctx.fillText(
-        "PLAGUE ZONE",
-        0,
-        0
-    );
-
-    ctx.restore();
-
 }
 
-
 /* ============================================================
-   DRAW FLOWER
-   ============================================================ */
+   BORDE DECORATIVO
+============================================================ */
 
-function drawFlower(x,y,size,health=1){
+function drawFrame(){
 
     ctx.save();
 
-    ctx.translate(x,y);
-
-
-    /* stem */
-
     ctx.strokeStyle="#111";
-
-    ctx.lineWidth=5;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,size*.25);
-
-    ctx.quadraticCurveTo(
-        -size*.08,
-        size*.55,
-        0,
-        size*.8
-    );
-
-    ctx.stroke();
-
-
-    /* leaves */
-
     ctx.lineWidth=3;
 
+    ctx.strokeRect(
+        15,
+        92,
+        W-30,
+        H-125
+    );
+
+    ctx.lineWidth=1;
+
+    ctx.strokeRect(
+        21,
+        98,
+        W-42,
+        H-137
+    );
+
+    ctx.restore();
+}
+
+/* ============================================================
+   PLAYER
+============================================================ */
+
+function createPlayer(){
+
+    player={
+        x:W/2-28,
+        y:H-105,
+        w:56,
+        h:65,
+        speed:390,
+        cooldown:0
+    };
+}
+
+function drawPlayer(){
+
+    const x=player.x+player.w/2;
+    const y=player.y+30;
+
+    ctx.save();
+
+    /* sombra */
+
+    ctx.globalAlpha=.18;
+
+    ctx.fillStyle="#111";
+
     ctx.beginPath();
 
     ctx.ellipse(
-        -size*.22,
-        size*.58,
-        size*.22,
-        size*.08,
-        -.3,
+        x,
+        player.y+62,
+        28,
+        7,
+        0,
         0,
         Math.PI*2
     );
 
+    ctx.fill();
+
+    ctx.globalAlpha=1;
+
+    /* tallo */
+
+    ctx.strokeStyle="#111";
+    ctx.lineWidth=7;
+    ctx.lineCap="round";
+
+    ctx.beginPath();
+
+    ctx.moveTo(x,y+13);
+
+    ctx.lineTo(x,player.y+58);
+
     ctx.stroke();
+
+    /* hojas */
+
+    ctx.fillStyle="#111";
 
     ctx.beginPath();
 
     ctx.ellipse(
-        size*.20,
-        size*.68,
-        size*.20,
-        size*.07,
-        .3,
+        x-12,
+        player.y+48,
+        16,
+        7,
+        -.35,
         0,
         Math.PI*2
     );
 
-    ctx.stroke();
+    ctx.fill();
 
+    ctx.beginPath();
 
-    /* petals */
+    ctx.ellipse(
+        x+12,
+        player.y+40,
+        16,
+        7,
+        .35,
+        0,
+        Math.PI*2
+    );
 
-    for(let i=0;i<8;i++){
+    ctx.fill();
 
-        let a=i*Math.PI/4;
+    /* pétalos */
 
-        let px=Math.cos(a)*size*.28;
+    const petals=10;
 
-        let py=Math.sin(a)*size*.28;
+    for(let i=0;i<petals;i++){
+
+        const a=
+            i*Math.PI*2/petals;
+
+        const px=x+Math.cos(a)*22;
+        const py=y+Math.sin(a)*22;
+
+        ctx.fillStyle="#111";
 
         ctx.beginPath();
 
         ctx.ellipse(
             px,
             py,
-            size*.22,
-            size*.34,
+            15,
+            24,
             a,
             0,
             Math.PI*2
         );
 
-        ctx.fillStyle="#f5f1e7";
-
         ctx.fill();
-
-        ctx.strokeStyle="#111";
-
-        ctx.lineWidth=4;
-
-        ctx.stroke();
 
     }
 
+    /* centro */
 
-    /* center */
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        0,
-        size*.22,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fillStyle="#111";
-
-    ctx.fill();
-
-
-    /* face */
-
-    ctx.fillStyle="#f5f1e7";
+    ctx.fillStyle="#eee8d9";
 
     ctx.beginPath();
 
     ctx.arc(
-        -size*.07,
-        -size*.02,
-        size*.025,
+        x,
+        y,
+        20,
         0,
         Math.PI*2
     );
 
     ctx.fill();
 
-    ctx.beginPath();
+    ctx.strokeStyle="#111";
+    ctx.lineWidth=4;
 
-    ctx.arc(
-        size*.07,
-        -size*.02,
-        size*.025,
-        0,
-        Math.PI*2
-    );
+    ctx.stroke();
 
-    ctx.fill();
+    /* OJOS X */
 
+    ctx.strokeStyle="#111";
 
-    ctx.strokeStyle="#f5f1e7";
+    ctx.lineWidth=3;
 
-    ctx.lineWidth=2;
+    ctx.lineCap="round";
+
+    /* izquierdo */
 
     ctx.beginPath();
 
+    ctx.moveTo(x-11,y-8);
+
+    ctx.lineTo(x-3,y);
+
+    ctx.moveTo(x-3,y-8);
+
+    ctx.lineTo(x-11,y);
+
+    ctx.stroke();
+
+    /* derecho */
+
+    ctx.beginPath();
+
+    ctx.moveTo(x+3,y-8);
+
+    ctx.lineTo(x+11,y);
+
+    ctx.moveTo(x+11,y-8);
+
+    ctx.lineTo(x+3,y);
+
+    ctx.stroke();
+
+    /* sonrisa */
+
+    ctx.beginPath();
+
     ctx.arc(
-        0,
-        size*.04,
-        size*.08,
+        x,
+        y+1,
+        7,
         0,
         Math.PI
     );
 
     ctx.stroke();
 
+    ctx.restore();
+}
+
+/* ============================================================
+   BULLET
+============================================================ */
+
+function shoot(){
+
+    if(player.cooldown>0) return;
+
+    bullets.push({
+
+        x:player.x+player.w/2-3,
+
+        y:player.y-10,
+
+        w:6,
+        h:18,
+
+        speed:620
+
+    });
+
+    player.cooldown=.22;
+
+}
+
+/* ============================================================
+   DRAW BULLET
+============================================================ */
+
+function drawBullet(b){
+
+    ctx.save();
+
+    ctx.fillStyle="#111";
+
+    ctx.fillRect(
+        b.x,
+        b.y,
+        b.w,
+        b.h
+    );
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        b.x,
+        b.y
+    );
+
+    ctx.lineTo(
+        b.x+b.w/2,
+        b.y-7
+    );
+
+    ctx.lineTo(
+        b.x+b.w,
+        b.y
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
 
     ctx.restore();
+}
 
+/* ============================================================
+   ENEMIES
+============================================================ */
 
-    /* health */
+function createWave(){
 
-    if(health<1){
+    enemies=[];
 
-        ctx.fillStyle="#111";
-
-        ctx.fillRect(
-            x-size*.35,
-            y-size*.65,
-            size*.7,
+    const rows=
+        Math.min(
+            3+Math.floor(wave/3),
             5
         );
 
-        ctx.fillStyle="#f5f1e7";
+    const cols=9;
 
-        ctx.fillRect(
-            x-size*.35,
-            y-size*.65,
-            size*.7*(1-health),
-            5
+    const spacing=
+        Math.min(
+            75,
+            (W-120)/cols
         );
+
+    const startX=
+        (W-(cols-1)*spacing)/2;
+
+    for(let row=0;row<rows;row++){
+
+        for(let col=0;col<cols;col++){
+
+            enemies.push({
+
+                x:startX+col*spacing-18,
+
+                y:125+row*58,
+
+                w:36,
+                h:34,
+
+                row:row,
+
+                hp:
+                    1+
+                    Math.floor(
+                        (wave-1)/4
+                    ),
+
+                maxHp:
+                    1+
+                    Math.floor(
+                        (wave-1)/4
+                    ),
+
+                type:
+                    (row+col)%4,
+
+                anim:Math.random()*Math.PI*2
+
+            });
+
+        }
 
     }
 
 }
 
-
 /* ============================================================
-   DRAW CACTUS
-   ============================================================ */
+   ENEMY DRAW
+============================================================ */
 
-function drawCactus(x,y,size){
+function drawEnemy(e){
+
+    const x=e.x+e.w/2;
+    const y=e.y+e.h/2;
 
     ctx.save();
 
     ctx.translate(x,y);
 
-    ctx.strokeStyle="#111";
-
-    ctx.fillStyle="#f5f1e7";
-
-    ctx.lineWidth=5;
-
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        -size*.18,
-        -size*.45,
-        size*.36,
-        size*.9,
-        size*.12
+    ctx.rotate(
+        Math.sin(e.anim)*.03
     );
 
-    ctx.fill();
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(-size*.18,-size*.1);
-
-    ctx.lineTo(-size*.42,-size*.1);
-
-    ctx.lineTo(-size*.42,-size*.3);
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(size*.18,size*.08);
-
-    ctx.lineTo(size*.42,size*.08);
-
-    ctx.lineTo(size*.42,-size*.12);
-
-    ctx.stroke();
-
-
+    ctx.strokeStyle="#111";
     ctx.fillStyle="#111";
 
-    ctx.beginPath();
+    ctx.lineWidth=3;
 
-    ctx.arc(
-        -size*.07,
-        -size*.18,
-        3,
-        0,
-        Math.PI*2
-    );
+    /* tipo 0 */
 
-    ctx.fill();
+    if(e.type===0){
 
-    ctx.beginPath();
-
-    ctx.arc(
-        size*.07,
-        -size*.18,
-        3,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-
-    ctx.restore();
-
-}
-
-
-/* ============================================================
-   DRAW MUSHROOM
-   ============================================================ */
-
-function drawMushroom(x,y,size){
-
-    ctx.save();
-
-    ctx.translate(x,y);
-
-    ctx.strokeStyle="#111";
-
-    ctx.fillStyle="#f5f1e7";
-
-    ctx.lineWidth=5;
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        -size*.1,
-        size*.4,
-        Math.PI,
-        0
-    );
-
-    ctx.fill();
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        -size*.16,
-        -size*.08,
-        size*.32,
-        size*.5,
-        size*.08
-    );
-
-    ctx.fill();
-
-    ctx.stroke();
-
-
-    ctx.fillStyle="#111";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        -size*.12,
-        -size*.18,
-        size*.05,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        size*.12,
-        -size*.18,
-        size*.05,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-
-    ctx.restore();
-
-}
-
-
-/* ============================================================
-   DRAW THORN
-   ============================================================ */
-
-function drawThorn(x,y,size){
-
-    ctx.save();
-
-    ctx.translate(x,y);
-
-    ctx.strokeStyle="#111";
-
-    ctx.lineWidth=5;
-
-    ctx.beginPath();
-
-    ctx.moveTo(-size*.45,size*.35);
-
-    ctx.lineTo(-size*.2,-size*.4);
-
-    ctx.lineTo(0,size*.15);
-
-    ctx.lineTo(size*.25,-size*.45);
-
-    ctx.lineTo(size*.45,size*.35);
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        0,
-        size*.2,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fillStyle="#111";
-
-    ctx.fill();
-
-
-    ctx.restore();
-
-}
-
-
-/* ============================================================
-   DRAW ENEMIES
-   ============================================================ */
-
-function drawEnemy(enemy){
-
-    ctx.save();
-
-    ctx.translate(enemy.x,enemy.y);
-
-
-    ctx.strokeStyle="#111";
-
-    ctx.fillStyle="#f5f1e7";
-
-    ctx.lineWidth=4;
-
-
-    if(enemy.type.name==="APHID"){
+        /* antenas */
 
         ctx.beginPath();
 
-        ctx.ellipse(
-            0,
-            0,
-            28,
-            20,
-            0,
-            0,
-            Math.PI*2
+        ctx.moveTo(-9,-11);
+        ctx.lineTo(-15,-21);
+
+        ctx.moveTo(9,-11);
+        ctx.lineTo(15,-21);
+
+        ctx.stroke();
+
+        /* cuerpo */
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            -15,
+            -10,
+            30,
+            24,
+            7
         );
 
         ctx.fill();
 
-        ctx.stroke();
+        /* alas */
 
+        ctx.beginPath();
+
+        ctx.moveTo(-15,0);
+        ctx.lineTo(-26,8);
+        ctx.lineTo(-16,13);
+
+        ctx.closePath();
+
+        ctx.fill();
+
+        ctx.beginPath();
+
+        ctx.moveTo(15,0);
+        ctx.lineTo(26,8);
+        ctx.lineTo(16,13);
+
+        ctx.closePath();
+
+        ctx.fill();
+
+    }
+
+    /* tipo 1 */
+
+    else if(e.type===1){
 
         ctx.beginPath();
 
         ctx.arc(
-            -22,
-            -3,
-            13,
+            0,
+            0,
+            18,
             0,
             Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.stroke();
-
-
-        for(let i=-1;i<=1;i++){
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                i*12,
-                16
-            );
-
-            ctx.lineTo(
-                i*18,
-                28
-            );
-
-            ctx.stroke();
-
-        }
-
-    }
-
-
-    else if(enemy.type.name==="BEETLE"){
+        ctx.fillStyle="#eee8d9";
 
         ctx.beginPath();
 
-        ctx.ellipse(
-            0,
-            0,
-            31,
-            24,
-            0,
-            0,
-            Math.PI*2
-        );
+        ctx.arc(-7,-3,3,0,Math.PI*2);
+
+        ctx.arc(7,-3,3,0,Math.PI*2);
 
         ctx.fill();
 
-        ctx.stroke();
-
+        ctx.strokeStyle="#eee8d9";
 
         ctx.beginPath();
 
-        ctx.moveTo(0,-23);
-
-        ctx.lineTo(0,23);
+        ctx.moveTo(-8,8);
+        ctx.lineTo(8,8);
 
         ctx.stroke();
 
-
-        for(let i=-1;i<=1;i++){
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                i*18,
-                -12
-            );
-
-            ctx.lineTo(
-                i*38,
-                -22
-            );
-
-            ctx.stroke();
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                i*18,
-                12
-            );
-
-            ctx.lineTo(
-                i*38,
-                22
-            );
-
-            ctx.stroke();
-
-        }
-
     }
 
+    /* tipo 2 */
 
-    else if(enemy.type.name==="CATERPILLAR"){
+    else if(e.type===2){
 
-        for(let i=0;i<4;i++){
+        for(let i=0;i<3;i++){
 
             ctx.beginPath();
 
             ctx.arc(
-                -35+i*23,
-                0,
-                17,
+                -14+i*14,
+                5,
+                10,
                 0,
                 Math.PI*2
             );
 
             ctx.fill();
 
-            ctx.stroke();
-
         }
+
+        ctx.strokeStyle="#111";
+
+        ctx.beginPath();
+
+        ctx.moveTo(-13,-5);
+        ctx.lineTo(-19,-17);
+
+        ctx.moveTo(13,-5);
+        ctx.lineTo(19,-17);
+
+        ctx.stroke();
 
     }
 
+    /* tipo 3 */
 
     else{
 
         ctx.beginPath();
 
-        ctx.ellipse(
+        ctx.moveTo(0,-19);
+
+        ctx.lineTo(18,0);
+
+        ctx.lineTo(0,19);
+
+        ctx.lineTo(-18,0);
+
+        ctx.closePath();
+
+        ctx.fill();
+
+        ctx.fillStyle="#eee8d9";
+
+        ctx.beginPath();
+
+        ctx.arc(
             0,
             0,
-            28,
-            18,
-            0,
+            5,
             0,
             Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.stroke();
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(-10,-10);
-
-        ctx.lineTo(-35,-30);
-
-        ctx.moveTo(10,-10);
-
-        ctx.lineTo(35,-30);
-
-        ctx.stroke();
-
     }
-
-
-    /* eyes */
-
-    ctx.fillStyle="#111";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        -8,
-        -5,
-        3,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        8,
-        -5,
-        3,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
 
     ctx.restore();
 
+    /* barra de vida */
 
-    /* health */
+    if(e.maxHp>1){
 
-    let maxHP=enemy.type.hp;
+        const ratio=e.hp/e.maxHp;
 
-    let hp=Math.max(
-        0,
-        enemy.hp/maxHP
-    );
+        ctx.fillStyle="#111";
 
-    ctx.fillStyle="#111";
-
-    ctx.fillRect(
-        enemy.x-25,
-        enemy.y-40,
-        50,
-        5
-    );
-
-    ctx.fillStyle="#f5f1e7";
-
-    ctx.fillRect(
-        enemy.x-25,
-        enemy.y-40,
-        50*hp,
-        5
-    );
-
-}
-
-
-/* ============================================================
-   PLANT CREATION
-   ============================================================ */
-
-function placePlant(type,lane,col){
-
-    const data=plantTypes[type];
-
-    if(!data) return;
-
-    if(energy<data.cost) return;
-
-
-    let existing=plants.find(
-        p =>
-        p.lane===lane &&
-        p.col===col
-    );
-
-    if(existing) return;
-
-
-    energy-=data.cost;
-
-
-    plants.push({
-
-        type:type,
-
-        lane:lane,
-
-        col:col,
-
-        x:gardenX+col*cellWidth+cellWidth/2,
-
-        y:laneY(lane),
-
-        hp:data.hp,
-
-        maxHP:data.hp,
-
-        cooldown:random(100,500)
-
-    });
-
-
-    updateUI();
-
-}
-
-
-/* ============================================================
-   SHOOT
-   ============================================================ */
-
-function shoot(plant){
-
-    projectiles.push({
-
-        x:plant.x+25,
-
-        y:plant.y,
-
-        lane:plant.lane,
-
-        damage:plantTypes[plant.type].damage,
-
-        speed:plantTypes[plant.type].speed
-
-    });
-
-}
-
-
-/* ============================================================
-   SPAWN ENEMY
-   ============================================================ */
-
-function spawnEnemy(){
-
-    let typeIndex=Math.floor(
-        Math.random()*
-        enemyTypes.length
-    );
-
-
-    /* later waves become harder */
-
-    if(wave<3){
-        typeIndex=Math.min(
-            typeIndex,
-            1
+        ctx.fillRect(
+            e.x,
+            e.y-7,
+            e.w,
+            3
         );
-    }
 
-    if(wave<6){
-        typeIndex=Math.min(
-            typeIndex,
-            2
+        ctx.fillStyle="#eee8d9";
+
+        ctx.fillRect(
+            e.x,
+            e.y-7,
+            e.w*(1-ratio),
+            3
         );
+
     }
+}
 
+/* ============================================================
+   ENEMY SHOOT
+============================================================ */
 
-    let type=enemyTypes[typeIndex];
+function enemyShoot(){
 
-    let lane=Math.floor(
-        Math.random()*lanes
-    );
+    if(enemies.length===0) return;
 
+    const e=
+        enemies[
+            Math.floor(
+                Math.random()*enemies.length
+            )
+        ];
 
-    enemies.push({
+    enemyBullets.push({
 
-        type:type,
+        x:e.x+e.w/2-3,
 
-        lane:lane,
+        y:e.y+e.h,
 
-        x:gardenX+gardenWidth+45,
+        w:6,
+        h:15,
 
-        y:laneY(lane),
-
-        hp:type.hp + wave*8,
-
-        maxHP:type.hp + wave*8,
-
-        damage:type.damage,
-
-        attackTimer:0
+        speed:
+            190+
+            wave*10
 
     });
 
 }
-
 
 /* ============================================================
    PARTICLES
-   ============================================================ */
+============================================================ */
 
-function burst(x,y){
+function burst(
+    x,
+    y,
+    amount=12
+){
 
-    for(let i=0;i<10;i++){
+    for(let i=0;i<amount;i++){
+
+        const a=
+            Math.random()*Math.PI*2;
+
+        const speed=
+            rand(40,190);
 
         particles.push({
 
             x:x,
-
             y:y,
 
-            vx:random(-2,2),
+            vx:Math.cos(a)*speed,
+            vy:Math.sin(a)*speed,
 
-            vy:random(-2,2),
+            life:rand(.3,.8),
 
-            life:400
+            size:rand(2,6)
 
         });
 
     }
-
 }
 
+function updateParticles(dt){
 
-/* ============================================================
-   UPDATE
-   ============================================================ */
+    for(
+        let i=particles.length-1;
+        i>=0;
+        i--
+    ){
 
-function update(dt){
+        const p=particles[i];
 
-    if(!running || paused || gameOver)
-        return;
+        p.x+=p.vx*dt;
+        p.y+=p.vy*dt;
 
-
-    /* energy */
-
-    energyTimer+=dt;
-
-    if(energyTimer>1800){
-
-        energy+=15;
-
-        energy=Math.min(
-            energy,
-            999
-        );
-
-        energyTimer=0;
-
-        updateUI();
-
-    }
-
-
-    /* spawn */
-
-    spawnTimer+=dt;
-
-    let spawnDelay=Math.max(
-        750,
-        3000-wave*180
-    );
-
-
-    if(spawnTimer>spawnDelay){
-
-        spawnEnemy();
-
-        spawnTimer=0;
-
-    }
-
-
-    /* wave */
-
-    waveTimer+=dt;
-
-    if(waveTimer>30000){
-
-        wave++;
-
-        waveTimer=0;
-
-        energy+=30;
-
-        updateUI();
-
-    }
-
-
-    /* plants */
-
-    for(let plant of plants){
-
-        plant.cooldown-=dt;
-
-
-        if(plant.cooldown<=0){
-
-            let target=enemies.find(
-                e =>
-                    e.lane===plant.lane &&
-                    e.x>plant.x
-            );
-
-
-            if(target){
-
-                shoot(plant);
-
-                plant.cooldown =
-                    plantTypes[plant.type].fireRate;
-
-            }
-
-        }
-
-    }
-
-
-    /* projectiles */
-
-    for(let i=projectiles.length-1;i>=0;i--){
-
-        let p=projectiles[i];
-
-        p.x+=p.speed;
-
-
-        let hit=null;
-
-
-        for(let enemy of enemies){
-
-            if(
-                enemy.lane===p.lane &&
-                Math.abs(enemy.x-p.x)<30
-            ){
-
-                hit=enemy;
-
-                break;
-
-            }
-
-        }
-
-
-        if(hit){
-
-            hit.hp-=p.damage;
-
-            burst(p.x,p.y);
-
-            projectiles.splice(i,1);
-
-
-            if(hit.hp<=0){
-
-                score+=hit.type.reward;
-
-                burst(hit.x,hit.y);
-
-                let index=enemies.indexOf(hit);
-
-                if(index>=0)
-                    enemies.splice(index,1);
-
-                updateUI();
-
-            }
-
-        }
-
-
-        if(p.x>W+50){
-
-            projectiles.splice(i,1);
-
-        }
-
-    }
-
-
-    /* enemies */
-
-    for(let i=enemies.length-1;i>=0;i--){
-
-        let enemy=enemies[i];
-
-        let plant=enemiesPlantCollision(enemy);
-
-
-        if(plant){
-
-            enemy.attackTimer+=dt;
-
-
-            if(enemy.attackTimer>700){
-
-                plant.hp-=enemy.damage;
-
-                enemy.attackTimer=0;
-
-                shake=8;
-
-            }
-
-
-            if(plant.hp<=0){
-
-                let index=plants.indexOf(plant);
-
-                if(index>=0)
-                    plants.splice(index,1);
-
-            }
-
-        }else{
-
-            enemy.x-=enemy.type.speed;
-
-        }
-
-
-        /* reached house */
-
-        if(enemy.x<60){
-
-            gameOver=true;
-
-            running=false;
-
-        }
-
-    }
-
-
-    /* particles */
-
-    for(let i=particles.length-1;i>=0;i--){
-
-        let p=particles[i];
-
-        p.x+=p.vx;
-
-        p.y+=p.vy;
+        p.vy+=250*dt;
 
         p.life-=dt;
-
 
         if(p.life<=0){
 
@@ -1691,630 +1301,681 @@ function update(dt){
         }
 
     }
-
-
-    shake*=.9;
-
 }
-
-
-/* ============================================================
-   COLLISION
-   ============================================================ */
-
-function enemiesPlantCollision(enemy){
-
-    for(let plant of plants){
-
-        if(
-            plant.lane===enemy.lane &&
-            Math.abs(enemy.x-plant.x)<45
-        ){
-
-            return plant;
-
-        }
-
-    }
-
-    return null;
-
-}
-
-
-/* ============================================================
-   DRAW PLANTS
-   ============================================================ */
-
-function drawPlants(){
-
-    for(let plant of plants){
-
-        let size=35;
-
-        let health=
-            plant.hp/plant.maxHP;
-
-
-        if(plant.type==="flower")
-            drawFlower(
-                plant.x,
-                plant.y,
-                size,
-                health
-            );
-
-        if(plant.type==="cactus")
-            drawCactus(
-                plant.x,
-                plant.y,
-                size
-            );
-
-        if(plant.type==="mushroom")
-            drawMushroom(
-                plant.x,
-                plant.y,
-                size
-            );
-
-        if(plant.type==="thorn")
-            drawThorn(
-                plant.x,
-                plant.y,
-                size
-            );
-
-    }
-
-}
-
-
-/* ============================================================
-   DRAW PROJECTILES
-   ============================================================ */
-
-function drawProjectiles(){
-
-    for(let p of projectiles){
-
-        ctx.fillStyle="#111";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            7,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-
-        /* little tail */
-
-        ctx.strokeStyle="#111";
-
-        ctx.lineWidth=2;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            p.x-12,
-            p.y
-        );
-
-        ctx.lineTo(
-            p.x-22,
-            p.y
-        );
-
-        ctx.stroke();
-
-    }
-
-}
-
-
-/* ============================================================
-   DRAW PARTICLES
-   ============================================================ */
 
 function drawParticles(){
 
-    for(let p of particles){
+    ctx.fillStyle="#111";
 
-        ctx.fillStyle="#111";
+    for(const p of particles){
 
         ctx.globalAlpha=
-            Math.max(0,p.life/400);
+            Math.max(
+                0,
+                p.life
+            );
 
         ctx.fillRect(
             p.x,
             p.y,
-            4,
-            4
+            p.size,
+            p.size
         );
 
     }
 
     ctx.globalAlpha=1;
-
 }
-
 
 /* ============================================================
-   DRAW UI OVER CANVAS
-   ============================================================ */
+   UPDATE
+============================================================ */
 
-function drawCanvasUI(){
+function update(dt){
 
-    if(!running && !gameOver){
+    if(!running || paused) return;
 
-        ctx.fillStyle="rgba(245,241,231,.88)";
+    /* player */
 
-        ctx.fillRect(
-            250,
-            220,
-            600,
-            170
-        );
+    if(keys.left){
 
-
-        ctx.strokeStyle="#111";
-
-        ctx.lineWidth=5;
-
-        ctx.strokeRect(
-            250,
-            220,
-            600,
-            170
-        );
-
-
-        ctx.fillStyle="#111";
-
-        ctx.textAlign="center";
-
-        ctx.font="bold 42px Georgia";
-
-        ctx.fillText(
-            "FLWR GARDEN",
-            W/2,
-            275
-        );
-
-
-        ctx.font="20px Georgia";
-
-        ctx.fillText(
-            "PLANTS VS PLAGUES",
-            W/2,
-            315
-        );
-
-
-        ctx.font="15px Georgia";
-
-        ctx.fillText(
-            "PRESS START TO DEFEND THE GARDEN",
-            W/2,
-            355
-        );
-
-        ctx.textAlign="left";
+        player.x-=
+            player.speed*dt;
 
     }
 
+    if(keys.right){
 
-    if(paused){
-
-        ctx.fillStyle="rgba(245,241,231,.88)";
-
-        ctx.fillRect(
-            300,
-            250,
-            500,
-            130
-        );
-
-
-        ctx.strokeStyle="#111";
-
-        ctx.lineWidth=5;
-
-        ctx.strokeRect(
-            300,
-            250,
-            500,
-            130
-        );
-
-
-        ctx.fillStyle="#111";
-
-        ctx.textAlign="center";
-
-        ctx.font="bold 40px Georgia";
-
-        ctx.fillText(
-            "PAUSED",
-            W/2,
-            330
-        );
-
-        ctx.textAlign="left";
+        player.x+=
+            player.speed*dt;
 
     }
 
-
-    if(gameOver){
-
-        ctx.fillStyle="rgba(245,241,231,.94)";
-
-        ctx.fillRect(
-            230,
-            190,
-            640,
-            250
+    player.x=
+        clamp(
+            player.x,
+            30,
+            W-player.w-30
         );
 
-
-        ctx.strokeStyle="#111";
-
-        ctx.lineWidth=6;
-
-        ctx.strokeRect(
-            230,
-            190,
-            640,
-            250
+    player.cooldown=
+        Math.max(
+            0,
+            player.cooldown-dt
         );
 
+    if(keys.fire){
 
-        ctx.fillStyle="#111";
+        shoot();
 
-        ctx.textAlign="center";
+    }
 
-        ctx.font="bold 50px Georgia";
+    /* bullets */
 
-        ctx.fillText(
-            "THE GARDEN FELL",
-            W/2,
-            265
+    for(
+        let i=bullets.length-1;
+        i>=0;
+        i--
+    ){
+
+        const b=bullets[i];
+
+        b.y-=b.speed*dt;
+
+        if(b.y<-30){
+
+            bullets.splice(i,1);
+
+            continue;
+        }
+
+        let hit=false;
+
+        for(
+            let j=enemies.length-1;
+            j>=0;
+            j--
+        ){
+
+            const e=enemies[j];
+
+            if(rectHit(b,e)){
+
+                e.hp--;
+
+                burst(
+                    b.x,
+                    b.y,
+                    8
+                );
+
+                bullets.splice(i,1);
+
+                hit=true;
+
+                if(e.hp<=0){
+
+                    score+=
+                        100+
+                        e.type*50;
+
+                    burst(
+                        e.x+e.w/2,
+                        e.y+e.h/2,
+                        20
+                    );
+
+                    shake=5;
+
+                    enemies.splice(j,1);
+
+                }
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    /* enemy movement */
+
+    let minX=Infinity;
+    let maxX=-Infinity;
+
+    for(const e of enemies){
+
+        e.anim+=dt*5;
+
+        minX=
+            Math.min(
+                minX,
+                e.x
+            );
+
+        maxX=
+            Math.max(
+                maxX,
+                e.x+e.w
+            );
+
+    }
+
+    if(
+        maxX>W-35 &&
+        enemyDirection>0
+    ){
+
+        enemyDirection=-1;
+        enemyDrop=15;
+
+    }
+
+    if(
+        minX<35 &&
+        enemyDirection<0
+    ){
+
+        enemyDirection=1;
+        enemyDrop=15;
+
+    }
+
+    for(const e of enemies){
+
+        e.x+=
+            enemyDirection*
+            (25+wave*3)*
+            dt;
+
+        if(enemyDrop){
+
+            e.y+=enemyDrop;
+
+        }
+
+    }
+
+    enemyDrop=0;
+
+    /* enemy bullets */
+
+    for(
+        let i=enemyBullets.length-1;
+        i>=0;
+        i--
+    ){
+
+        const b=enemyBullets[i];
+
+        b.y+=b.speed*dt;
+
+        if(b.y>H){
+
+            enemyBullets.splice(i,1);
+
+            continue;
+
+        }
+
+        if(rectHit(b,player)){
+
+            enemyBullets.splice(i,1);
+
+            loseLife();
+
+        }
+
+    }
+
+    /* shooting */
+
+    spawnTimer+=dt;
+
+    if(
+        spawnTimer>
+        Math.max(
+            .3,
+            1.5-wave*.04
+        )
+    ){
+
+        spawnTimer=0;
+
+        enemyShoot();
+
+    }
+
+    /* particles */
+
+    updateParticles(dt);
+
+    /* wave complete */
+
+    if(enemies.length===0){
+
+        wave++;
+
+        score+=500;
+
+        createWave();
+
+    }
+
+    /* enemies reach player */
+
+    for(const e of enemies){
+
+        if(
+            e.y+e.h>
+            player.y+15
+        ){
+
+            loseLife();
+
+            createWave();
+
+            break;
+
+        }
+
+    }
+
+    /* HUD */
+
+    document.getElementById("score").textContent=
+        String(score).padStart(6,"0");
+
+    document.getElementById("wave").textContent=
+        String(wave).padStart(2,"0");
+
+    document.getElementById("lives").textContent=
+        String(lives).padStart(2,"0");
+
+    shake=
+        Math.max(
+            0,
+            shake-dt*20
         );
 
+}
 
-        ctx.font="22px Georgia";
+/* ============================================================
+   LIFE
+============================================================ */
 
-        ctx.fillText(
-            "THE PLAGUES HAVE WON...",
-            W/2,
-            315
-        );
+function loseLife(){
 
+    lives--;
 
-        ctx.font="18px Georgia";
+    shake=12;
 
-        ctx.fillText(
-            "SCORE: "+score,
-            W/2,
-            355
-        );
+    burst(
+        player.x+player.w/2,
+        player.y+30,
+        30
+    );
 
+    player.x=W/2-player.w/2;
 
-        ctx.font="14px Georgia";
+    if(lives<=0){
 
-        ctx.fillText(
-            "PRESS RESTART TO TRY AGAIN",
-            W/2,
-            395
-        );
-
-        ctx.textAlign="left";
+        gameOver();
 
     }
 
 }
 
+/* ============================================================
+   GAME OVER
+============================================================ */
+
+function gameOver(){
+
+    running=false;
+
+    document.getElementById(
+        "finalScore"
+    ).textContent=
+        "SCORE "+
+        String(score).padStart(6,"0");
+
+    document.getElementById(
+        "gameOverOverlay"
+    ).style.display="flex";
+
+}
 
 /* ============================================================
    DRAW
-   ============================================================ */
+============================================================ */
 
 function draw(){
 
     ctx.save();
 
-
-    if(shake>1){
+    if(shake>0){
 
         ctx.translate(
-            random(-shake,shake),
-            random(-shake,shake)
+            rand(-shake,shake),
+            rand(-shake,shake)
         );
 
     }
 
-
     drawBackground();
 
+    drawFrame();
 
-    drawPlants();
+    /* bullets */
 
+    for(const b of bullets){
 
-    for(let enemy of enemies)
-        drawEnemy(enemy);
+        drawBullet(b);
 
+    }
 
-    drawProjectiles();
+    /* enemy bullets */
+
+    for(const b of enemyBullets){
+
+        ctx.fillStyle="#111";
+
+        ctx.fillRect(
+            b.x,
+            b.y,
+            b.w,
+            b.h
+        );
+
+    }
+
+    /* enemies */
+
+    for(const e of enemies){
+
+        drawEnemy(e);
+
+    }
+
+    drawPlayer();
 
     drawParticles();
 
-
     ctx.restore();
-
-
-    drawCanvasUI();
 
 }
 
-
 /* ============================================================
-   MAIN LOOP
-   ============================================================ */
+   LOOP
+============================================================ */
 
-function loop(timestamp){
+function loop(time){
 
-    let dt=
-        timestamp-lastTime;
+    const dt=
+        Math.min(
+            (time-lastTime)/1000,
+            .033
+        );
 
-    lastTime=timestamp;
-
-
-    dt=Math.min(dt,50);
-
+    lastTime=time;
 
     update(dt);
 
     draw();
 
-
     requestAnimationFrame(loop);
 
 }
 
+requestAnimationFrame(loop);
 
 /* ============================================================
-   MOUSE / TOUCH
-   ============================================================ */
+   START
+============================================================ */
 
-canvas.addEventListener(
-    "pointerdown",
-    function(e){
+function startGame(){
 
-        if(!running || paused || gameOver)
-            return;
+    score=0;
 
+    lives=3;
 
-        let rect=
-            canvas.getBoundingClientRect();
+    wave=1;
 
+    bullets=[];
 
-        let scaleX=
-            W/rect.width;
+    enemyBullets=[];
 
-        let scaleY=
-            H/rect.height;
+    particles=[];
 
+    enemyDirection=1;
 
-        let x=
-            (e.clientX-rect.left)*scaleX;
+    spawnTimer=0;
 
-        let y=
-            (e.clientY-rect.top)*scaleY;
+    createPlayer();
 
+    createWave();
 
-        if(
-            x<gardenX ||
-            x>gardenX+gardenWidth ||
-            y<gardenY ||
-            y>gardenY+gardenHeight
-        ){
+    running=true;
 
-            return;
+    paused=false;
 
-        }
+    document.getElementById(
+        "startOverlay"
+    ).style.display="none";
 
+    document.getElementById(
+        "gameOverOverlay"
+    ).style.display="none";
 
-        let col=
-            Math.floor(
-                (x-gardenX)/cellWidth
-            );
-
-
-        let lane=
-            Math.floor(
-                (y-gardenY)/laneHeight
-            );
-
-
-        placePlant(
-            selectedPlant,
-            lane,
-            col
-        );
-
-    }
-);
-
-
-/* ============================================================
-   PLANT CARDS
-   ============================================================ */
-
-document.querySelectorAll(".card").forEach(
-    card=>{
-
-        card.addEventListener(
-            "click",
-            ()=>{
-
-                selectedPlant=
-                    card.dataset.type;
-
-
-                document
-                    .querySelectorAll(".card")
-                    .forEach(c=>
-                        c.classList.remove(
-                            "selected"
-                        )
-                    );
-
-
-                card.classList.add(
-                    "selected"
-                );
-
-            }
-        );
-
-    }
-);
-
-
-/* ============================================================
-   KEYBOARD
-   ============================================================ */
-
-document.addEventListener(
-    "keydown",
-    e=>{
-
-        if(e.key==="1")
-            selectCard("flower");
-
-        if(e.key==="2")
-            selectCard("cactus");
-
-        if(e.key==="3")
-            selectCard("mushroom");
-
-        if(e.key==="4")
-            selectCard("thorn");
-
-        if(e.key==="Escape")
-            togglePause();
-
-    }
-);
-
-
-function selectCard(type){
-
-    selectedPlant=type;
-
-
-    document
-        .querySelectorAll(".card")
-        .forEach(c=>{
-
-            c.classList.toggle(
-                "selected",
-                c.dataset.type===type
-            );
-
-        });
+    document.getElementById(
+        "pauseOverlay"
+    ).style.display="none";
 
 }
 
+/* ============================================================
+   PAUSE
+============================================================ */
+
+function togglePause(){
+
+    if(!running) return;
+
+    paused=!paused;
+
+    document.getElementById(
+        "pauseOverlay"
+    ).style.display=
+        paused ?
+        "flex":
+        "none";
+
+}
 
 /* ============================================================
-   BUTTONS
-   ============================================================ */
+   KEYBOARD
+============================================================ */
 
-document.getElementById("startBtn")
-.addEventListener(
-    "click",
-    ()=>{
+window.addEventListener(
+    "keydown",
+    e=>{
 
-        if(gameOver)
-            return;
+        if(
+            e.code==="ArrowLeft" ||
+            e.code==="KeyA"
+        ){
 
-        running=true;
+            keys.left=true;
+
+        }
+
+        if(
+            e.code==="ArrowRight" ||
+            e.code==="KeyD"
+        ){
+
+            keys.right=true;
+
+        }
+
+        if(
+            e.code==="Space"
+        ){
+
+            e.preventDefault();
+
+            keys.fire=true;
+
+        }
+
+        if(
+            e.code==="KeyP" ||
+            e.code==="Escape"
+        ){
+
+            togglePause();
+
+        }
 
     }
 );
 
+window.addEventListener(
+    "keyup",
+    e=>{
 
-document.getElementById("pauseBtn")
-.addEventListener(
+        if(
+            e.code==="ArrowLeft" ||
+            e.code==="KeyA"
+        ){
+
+            keys.left=false;
+
+        }
+
+        if(
+            e.code==="ArrowRight" ||
+            e.code==="KeyD"
+        ){
+
+            keys.right=false;
+
+        }
+
+        if(
+            e.code==="Space"
+        ){
+
+            keys.fire=false;
+
+        }
+
+    }
+);
+
+/* ============================================================
+   MOBILE CONTROLS
+============================================================ */
+
+function holdButton(
+    element,
+    key
+){
+
+    element.addEventListener(
+        "pointerdown",
+        e=>{
+
+            e.preventDefault();
+
+            keys[key]=true;
+
+        }
+    );
+
+    element.addEventListener(
+        "pointerup",
+        e=>{
+
+            e.preventDefault();
+
+            keys[key]=false;
+
+        }
+    );
+
+    element.addEventListener(
+        "pointercancel",
+        ()=>{
+            keys[key]=false;
+        }
+    );
+
+    element.addEventListener(
+        "pointerleave",
+        ()=>{
+            keys[key]=false;
+        }
+    );
+
+}
+
+holdButton(
+    document.getElementById("leftBtn"),
+    "left"
+);
+
+holdButton(
+    document.getElementById("rightBtn"),
+    "right"
+);
+
+holdButton(
+    document.getElementById("fireBtn"),
+    "fire"
+);
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+document.getElementById(
+    "startBtn"
+).addEventListener(
+    "click",
+    startGame
+);
+
+document.getElementById(
+    "restartBtn"
+).addEventListener(
+    "click",
+    startGame
+);
+
+document.getElementById(
+    "pauseBtn"
+).addEventListener(
     "click",
     togglePause
 );
 
-
-document.getElementById("restartBtn")
-.addEventListener(
+document.getElementById(
+    "resumeBtn"
+).addEventListener(
     "click",
-    restart
+    togglePause
 );
 
-
-function togglePause(){
-
-    if(!running || gameOver)
-        return;
-
-    paused=!paused;
-
-}
-
-
-function restart(){
-
-    energy=100;
-
-    score=0;
-
-    wave=1;
-
-    running=false;
-
-    paused=false;
-
-    gameOver=false;
-
-    spawnTimer=0;
-
-    energyTimer=0;
-
-    waveTimer=0;
-
-    plants=[];
-
-    enemies=[];
-
-    projectiles=[];
-
-    particles=[];
-
-    updateUI();
-
-}
-
-
 /* ============================================================
-   INITIALIZATION
-   ============================================================ */
+   PREVIEW
+============================================================ */
 
-updateUI();
+createPlayer();
 
-requestAnimationFrame(loop);
+createWave();
 
 </script>
 
