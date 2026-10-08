@@ -2,1184 +2,1459 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FLWR INVADERS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FLWR®</title>
+
+<meta name="description"
+content="FLWR® — Independent creative brand.">
 
 <style>
-:root{
-    --paper:#eee9dc;
-    --ink:#111;
-    --soft:#d8d1c1;
-    --dark:#050505;
-}
 
 *{
+    margin:0;
+    padding:0;
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
-    margin:0;
-    width:100%;
-    min-height:100%;
-    background:#050505;
-    color:var(--paper);
-    font-family:Arial,Helvetica,sans-serif;
-    overflow-x:hidden;
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    padding:14px;
+    background:#000;
+    color:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
 }
 
-.game-shell{
-    width:min(1100px,100%);
-    position:relative;
-}
+/* =========================================================
+   FLWR LOGO
+   Vector basado únicamente en las letras de tu logo.
+   NO contiene la flor.
+========================================================= */
 
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    margin-bottom:10px;
-    border-bottom:2px solid var(--paper);
-    padding-bottom:8px;
-}
-
-.logo{
-    font-weight:900;
-    font-size:clamp(25px,5vw,46px);
-    letter-spacing:-3px;
-    line-height:1;
-}
-
-.logo span{
-    display:block;
-    font-size:9px;
-    letter-spacing:4px;
-    margin-top:5px;
-    font-weight:700;
-}
-
-.stats{
-    display:flex;
-    gap:14px;
-    text-align:right;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-}
-
-.stat strong{
-    display:block;
-    font-size:20px;
-    letter-spacing:0;
-}
-
-.game-frame{
-    position:relative;
-    width:100%;
-    border:3px solid var(--paper);
-    background:#080808;
-    box-shadow:8px 8px 0 rgba(238,233,220,.14);
-}
-
-canvas{
-    display:block;
+.flwr-logo{
     width:100%;
     height:auto;
-    background:#090909;
-    touch-action:none;
+    display:block;
 }
 
-.scanlines{
-    position:absolute;
+.flwr-logo path{
+    fill:#fff;
+    fill-rule:evenodd;
+}
+
+
+/* =========================================================
+   INTRO / PRESS START
+========================================================= */
+
+#intro{
+
+    position:fixed;
+
     inset:0;
-    pointer-events:none;
-    opacity:.08;
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            transparent 0px,
-            transparent 3px,
-            #fff 4px
-        );
-}
 
-.overlay{
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,.82);
-    z-index:10;
-    padding:20px;
-}
-
-.panel{
-    width:min(500px,95%);
-    border:3px solid var(--paper);
-    background:#090909;
-    padding:26px;
-    text-align:center;
-    box-shadow:8px 8px 0 rgba(238,233,220,.2);
-}
-
-.panel h1{
-    margin:0 0 8px;
-    font-size:clamp(28px,7vw,55px);
-    letter-spacing:-2px;
-}
-
-.panel h2{
-    margin:0 0 16px;
-    font-size:20px;
-}
-
-.panel p{
-    color:#cfc8b8;
-    font-size:13px;
-    line-height:1.5;
-}
-
-button{
-    appearance:none;
-    border:2px solid var(--paper);
-    background:var(--paper);
-    color:#050505;
-    font-weight:900;
-    padding:12px 20px;
-    cursor:pointer;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    min-height:44px;
-}
-
-button:hover{
-    background:#050505;
-    color:var(--paper);
-}
-
-button:active{
-    transform:translateY(1px);
-}
-
-.name-input{
     width:100%;
-    height:48px;
-    margin:12px 0;
-    padding:0 14px;
-    border:2px solid var(--paper);
-    outline:none;
-    background:#111;
-    color:var(--paper);
-    font-size:18px;
-    text-align:center;
-    text-transform:uppercase;
-}
+    height:100vh;
 
-.name-input:focus{
-    background:#181818;
-}
+    background:#000;
 
-.error{
-    color:#ff8d8d;
-    min-height:18px;
-    font-size:12px;
-    margin-top:8px;
-}
+    z-index:9999;
 
-.loading{
-    color:#cfc8b8;
-    font-size:12px;
-    margin-top:10px;
-}
+    display:flex;
 
-.leaderboard{
-    margin-top:18px;
-    border-top:1px solid #555;
-    padding-top:14px;
-    text-align:left;
-}
-
-.leaderboard-title{
-    text-align:center;
-    font-size:12px;
-    letter-spacing:3px;
-    margin-bottom:10px;
-    font-weight:900;
-}
-
-.score-row{
-    display:grid;
-    grid-template-columns:38px 1fr 85px 55px;
-    gap:8px;
     align-items:center;
-    padding:7px 0;
-    border-bottom:1px dashed #444;
-    font-size:12px;
-}
 
-.score-row .rank{
-    font-weight:900;
-}
-
-.score-row .name{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.score-row .score{
-    text-align:right;
-    font-weight:900;
-}
-
-.score-row .wave{
-    text-align:right;
-    color:#aaa;
-    font-size:10px;
-}
-
-.controls{
-    display:flex;
     justify-content:center;
-    gap:8px;
-    margin-top:10px;
+
+    cursor:pointer;
+
+    transition:
+        opacity .8s ease,
+        visibility .8s ease;
+
 }
 
-.control-btn{
-    width:70px;
-    min-height:48px;
-    padding:8px;
-    font-size:18px;
-    background:#090909;
-    color:var(--paper);
+#intro.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
+
 }
 
-.control-btn.fire{
-    width:100px;
+.intro-content{
+
+    width:min(88vw,1400px);
+
+    text-align:center;
+
 }
 
-.footer{
+.intro-logo{
+
+    width:100%;
+
+    margin:auto;
+
+}
+
+.press-start{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:14px;
+
+    margin-top:55px;
+
+    padding:16px 26px;
+
+    border:1px solid #fff;
+
+    color:#fff;
+
+    background:#000;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:4px;
+
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .25s ease;
+
+}
+
+.press-start:hover{
+
+    background:#fff;
+
+    color:#000;
+
+    transform:scale(1.03);
+
+}
+
+.press-start::before{
+
+    content:"▶";
+
+    font-size:10px;
+
+}
+
+
+/* =========================================================
+   MAIN WEBSITE
+========================================================= */
+
+#site{
+
+    min-height:100vh;
+
+    opacity:0;
+
+    transform:scale(1.015);
+
+    transition:
+        opacity 1s ease,
+        transform 1s ease;
+
+}
+
+#site.visible{
+
+    opacity:1;
+
+    transform:scale(1);
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    height:74px;
+
+    padding:0 28px;
+
     display:flex;
+
+    align-items:center;
+
     justify-content:space-between;
-    margin-top:8px;
-    color:#8d887d;
+
+    z-index:100;
+
+    background:rgba(0,0,0,.82);
+
+    backdrop-filter:blur(8px);
+
+    border-bottom:1px solid #151515;
+
+}
+
+.header-logo{
+
+    width:100px;
+
+}
+
+.header-nav{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.nav-button{
+
+    appearance:none;
+
+    border:1px solid #333;
+
+    background:#000;
+
+    color:#fff;
+
+    padding:10px 16px;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.25s ease;
+
+}
+
+.nav-button:hover{
+
+    background:#fff;
+
+    color:#000;
+
+    border-color:#fff;
+
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+.cart-button{
+
+    position:relative;
+
+}
+
+.cart-count{
+
+    position:absolute;
+
+    top:-7px;
+
+    right:-7px;
+
+    width:17px;
+
+    height:17px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#fff;
+
+    color:#000;
+
+    border-radius:50%;
+
     font-size:9px;
+
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+
+    min-height:100vh;
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:100px 25px 60px;
+
+    position:relative;
+
+}
+
+.hero-inner{
+
+    width:min(94vw,1700px);
+
+    text-align:center;
+
+}
+
+.hero-logo{
+
+    width:100%;
+
+    max-width:1600px;
+
+    margin:auto;
+
+}
+
+.hero-subtitle{
+
+    margin-top:42px;
+
+    font-size:10px;
+
+    letter-spacing:5px;
+
+    color:#888;
+
+}
+
+
+/* =========================================================
+   SCROLL INDICATOR
+========================================================= */
+
+.scroll-indicator{
+
+    position:absolute;
+
+    bottom:28px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:9px;
+
+    letter-spacing:4px;
+
+    color:#666;
+
+    animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+    0%,100%{
+        opacity:.25;
+    }
+
+    50%{
+        opacity:1;
+    }
+
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content-section{
+
+    min-height:100vh;
+
+    padding:130px 7vw;
+
+    border-top:1px solid #151515;
+
+}
+
+
+/* =========================================================
+   BIG TITLES
+========================================================= */
+
+.big-title{
+
+    font-size:
+        clamp(70px,14vw,210px);
+
+    line-height:.78;
+
+    letter-spacing:-10px;
+
+    font-weight:900;
+
+    margin-bottom:80px;
+
+}
+
+
+/* =========================================================
+   DROPS
+========================================================= */
+
+.products{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:20px;
+
+}
+
+.product{
+
+    min-height:520px;
+
+    border:1px solid #222;
+
+    position:relative;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    padding:25px;
+
+    overflow:hidden;
+
+    transition:
+        transform .35s ease,
+        border-color .35s ease;
+
+}
+
+.product:hover{
+
+    transform:translateY(-6px);
+
+    border-color:#777;
+
+}
+
+.product-number{
+
+    font-size:10px;
+
+    letter-spacing:3px;
+
+    color:#666;
+
+}
+
+.product-visual{
+
+    flex:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:40px;
+
+}
+
+.product-logo{
+
+    width:90%;
+
+    max-width:700px;
+
+}
+    .product-image{
+    width:100%;
+    height:100%;
+    max-height:420px;
+    object-fit:contain;
+    display:block;
+}
+
+.product-info{
+
+    display:flex;
+
+    align-items:end;
+
+    justify-content:space-between;
+
+    border-top:1px solid #222;
+
+    padding-top:20px;
+
+}
+
+.product-name{
+
+    font-size:15px;
+
+    font-weight:700;
+
     letter-spacing:1px;
-    text-transform:uppercase;
+
 }
 
-.hidden{
-    display:none !important;
+.product-status{
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#777;
+
 }
 
-@media(max-width:600px){
-    body{
-        padding:8px;
-        align-items:flex-start;
-        padding-top:14px;
+
+/* =========================================================
+   MANIFESTO
+========================================================= */
+
+.manifesto{
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.manifesto-text{
+
+    max-width:1250px;
+
+    font-size:
+        clamp(35px,6vw,85px);
+
+    line-height:.95;
+
+    letter-spacing:-4px;
+
+    font-weight:800;
+
+}
+
+
+/* =========================================================
+   FINAL CTA
+========================================================= */
+
+.final{
+
+    min-height:85vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+}
+
+.final-title{
+
+    font-size:
+        clamp(65px,15vw,220px);
+
+    line-height:.75;
+
+    letter-spacing:-11px;
+
+    font-weight:900;
+
+}
+
+.final-button{
+
+    margin-top:70px;
+
+    padding:18px 30px;
+
+    border:1px solid #fff;
+
+    background:#000;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    letter-spacing:4px;
+
+    transition:.25s;
+
+}
+
+.final-button:hover{
+
+    background:#fff;
+
+    color:#000;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+
+    border-top:1px solid #151515;
+
+    padding:25px 30px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#555;
+
+}
+
+.footer-links{
+
+    display:flex;
+
+    gap:25px;
+
+}
+
+.footer-links a{
+
+    color:#777;
+
+    text-decoration:none;
+
+}
+
+.footer-links a:hover{
+
+    color:#fff;
+
+}
+
+
+/* =========================================================
+   CART PANEL
+========================================================= */
+
+.cart-panel{
+
+    position:fixed;
+
+    top:0;
+
+    right:-420px;
+
+    width:min(90vw,420px);
+
+    height:100vh;
+
+    background:#050505;
+
+    border-left:1px solid #222;
+
+    z-index:500;
+
+    padding:30px;
+
+    transition:right .4s ease;
+
+}
+
+.cart-panel.open{
+
+    right:0;
+
+}
+
+.cart-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding-bottom:25px;
+
+    border-bottom:1px solid #222;
+
+}
+
+.cart-title{
+
+    font-size:12px;
+
+    letter-spacing:3px;
+
+    font-weight:700;
+
+}
+
+.close-cart{
+
+    background:none;
+
+    border:0;
+
+    color:#fff;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+}
+
+.cart-empty{
+
+    height:70%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+}
+
+.cart-empty strong{
+
+    font-size:35px;
+
+    letter-spacing:-2px;
+
+    margin-bottom:15px;
+
+}
+
+.cart-empty span{
+
+    color:#555;
+
+    font-size:10px;
+
+    letter-spacing:2px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+    header{
+
+        height:64px;
+
+        padding:0 15px;
+
     }
 
-    .header{
-        margin-bottom:7px;
+    .header-logo{
+
+        width:80px;
+
     }
 
-    .stats{
-        gap:8px;
+    .header-nav{
+
+        gap:5px;
+
+    }
+
+    .nav-button{
+
+        padding:8px 9px;
+
         font-size:8px;
+
+        letter-spacing:1px;
+
     }
 
-    .stat strong{
-        font-size:16px;
+    .hero{
+
+        padding:
+            90px 14px 50px;
+
     }
 
-    .panel{
-        padding:18px;
+    .intro-content{
+
+        width:94vw;
+
     }
 
-    .score-row{
-        grid-template-columns:28px 1fr 70px 42px;
-        font-size:11px;
+    .press-start{
+
+        margin-top:35px;
+
     }
 
-    .footer{
-        font-size:7px;
+    .hero-subtitle{
+
+        font-size:8px;
+
+        letter-spacing:3px;
+
+        line-height:2;
+
     }
+
+    .content-section{
+
+        padding:100px 18px;
+
+    }
+
+    .big-title{
+
+        letter-spacing:-5px;
+
+        margin-bottom:50px;
+
+    }
+
+    .products{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .product{
+
+        min-height:420px;
+
+    }
+
+    .product-visual{
+
+        padding:20px;
+
+    }
+
+    .manifesto-text{
+
+        letter-spacing:-2px;
+
+    }
+
+    .final-title{
+
+        letter-spacing:-6px;
+
+    }
+
+    footer{
+
+        padding:22px 18px;
+
+        flex-direction:column;
+
+        gap:18px;
+
+    }
+
 }
+
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    *{
+
+        scroll-behavior:auto !important;
+
+        animation:none !important;
+
+        transition:none !important;
+
+    }
+
+}
+
 </style>
 </head>
 
+
 <body>
 
-<div class="game-shell">
 
-    <div class="header">
-        <div class="logo">
-            FLWR
-            <span>INVADERS // GARDEN DEFENSE</span>
-        </div>
+<!-- =======================================================
+     INTRO
+======================================================= -->
 
-        <div class="stats">
-            <div class="stat">
-                SCORE
-                <strong id="score">000000</strong>
-            </div>
+<div id="intro">
 
-            <div class="stat">
-                WAVE
-                <strong id="wave">01</strong>
-            </div>
+    <div class="intro-content">
 
-            <div class="stat">
-                LIVES
-                <strong id="lives">03</strong>
-            </div>
-        </div>
-    </div>
+        <!-- TU LOGO FLWR — SOLO LETRAS -->
 
-    <div class="game-frame">
+        <svg
+            class="flwr-logo intro-logo"
+            viewBox="0 0 2830 1034"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet">
 
-        <canvas id="game" width="1000" height="700"></canvas>
+            <!-- F -->
+            <path d="
+            M619,99 530,101 177,103 140,105
+            143,646 145,732 145,848 147,886
+            304,884 306,570 308,568 500,567
+            557,565 596,566 603,564 606,465
+            605,413 306,411 306,258 311,256
+            617,256 619,231 Z"/>
 
-        <div class="scanlines"></div>
+            <!-- L -->
+            <path d="
+            M720,104 719,738 721,785 721,885
+            936,887 1197,887 1199,787
+            1198,735 888,735 886,733
+            887,513 885,109 883,105 Z"/>
 
-        <!-- START -->
-        <div class="overlay" id="startOverlay">
-            <div class="panel">
-                <h1>FLWR<br>INVADERS</h1>
-                <p>
-                    THE GARDEN IS UNDER ATTACK.<br>
-                    PROTECT THE FLWR.
-                </p>
+            <!-- W -->
+            <path d="
+            M2155,104 1990,105 1977,161 1975,164
+            1973,177 1971,180 1928,353 1926,356
+            1925,365 1922,372 1916,400 1914,403
+            1908,432 1906,435 1900,463 1898,466
+            1892,495 1890,498 1868,589 1865,596
+            1859,624 1857,627 1855,640 1853,643
+            1847,671 1844,678 1841,677 1837,654
+            1814,561 1812,547 1806,526 1800,494
+            1798,491 1796,477 1790,456 1788,442
+            1785,434 1784,424 1782,421 1780,407
+            1778,403 1776,389 1773,381 1772,371
+            1770,368 1768,353 1766,350 1764,336
+            1761,328 1760,318 1757,310 1756,300
+            1750,276 1722,274 1576,274 1574,276
+            1572,291 1569,299 1568,309 1565,317
+            1564,327 1561,335 1560,345 1557,353
+            1556,363 1553,371 1552,381 1549,389
+            1548,399 1545,407 1544,417 1541,425
+            1540,435 1537,443 1527,493 1525,496
+            1523,511 1521,515 1511,565 1509,568
+            1507,583 1505,587 1503,601 1493,641
+            1488,669 1484,672 1483,684 1481,687
+            1478,685 1476,672 1474,669 1472,655
+            1469,648 1464,621 1462,618 1452,570
+            1449,563 1448,553 1445,546 1428,469
+            1424,457 1424,452 1416,423 1416,418
+            1412,406 1407,380 1405,377 1403,363
+            1400,355 1399,346 1397,343 1395,329
+            1393,326 1391,312 1389,309 1387,295
+            1385,292 1383,278 1380,270 1363,193
+            1359,181 1359,176 1356,168 1343,108
+            1335,107 1229,109 1170,112 1169,117
+            1175,138 1176,147 1229,361 1257,466
+            1335,778 1337,781 1358,869 1363,883
+            1520,887 1595,886 1602,855 1604,839
+            1606,835 1608,819 1610,815 1612,799
+            1614,795 1616,779 1618,775 1620,759
+            1622,755 1624,739 1626,735 1628,719
+            1630,715 1632,699 1634,695 1636,678
+            1638,675 1640,658 1642,654 1659,564
+            1661,562 1663,564 1671,608 1673,611
+            1679,647 1686,675 1687,686 1690,694
+            1691,705 1706,772 1707,783 1714,811
+            1715,822 1722,850 1724,865 1726,869
+            1728,885 1730,887 1839,888 1960,887
+            1963,875 1963,868 1967,857 1981,797
+            1983,794 1983,789 1993,749 1995,746
+            1996,737 1999,730 2000,721 2003,714
+            2004,705 2007,698 2008,689 2011,682
+            2021,637 2027,619 2028,610 2049,526
+            2052,519 2053,510 2056,503 2068,455
+            2069,446 2072,439 2073,430 2076,423
+            2086,378 2088,375 2090,362 2092,359
+            2102,315 2104,312 2106,299 2108,296
+            2147,136 2149,133 2150,124 2153,118 Z"/>
 
-                <button id="startBtn">START GAME</button>
+            <!-- R + hueco -->
+            <path d="
+            M2228,101 2228,879 2232,881 2250,880
+            2312,883 2381,883 2384,810 2385,648
+            2386,638 2388,636 2399,651 2497,803
+            2506,819 2551,887 2583,887 2722,880
+            2708,856 2702,849 2651,769 2633,744
+            2541,603 2543,600 2562,591 2590,571
+            2619,542 2631,526 2647,499 2655,483
+            2668,445 2675,411 2677,391 2676,339
+            2671,312 2663,283 2661,281 2660,275
+            2652,256 2632,219 2604,182 2583,161
+            2550,137 2528,125 2485,109 2460,104
+            2429,103 2359,104 Z
 
-                <p>
-                    DESKTOP: ← → / A D + SPACE<br>
-                    MOBILE: USE THE CONTROLS BELOW
-                </p>
-            </div>
-        </div>
+            M2394,260 2410,261 2433,268 2448,276
+            2463,287 2481,307 2492,324 2497,336
+            2502,357 2502,389 2500,402 2493,422
+            2483,439 2467,457 2451,469 2437,476
+            2416,482 2391,481 2391,264 Z"/>
 
-        <!-- GAME OVER -->
-        <div class="overlay hidden" id="gameOverOverlay">
-            <div class="panel">
+        </svg>
 
-                <h1>GAME OVER</h1>
 
-                <p>
-                    FINAL SCORE
-                </p>
-
-                <h2 id="finalScore">000000</h2>
-
-                <div id="saveSection">
-
-                    <p>ENTER YOUR NAME</p>
-
-                    <input
-                        id="nameInput"
-                        class="name-input"
-                        type="text"
-                        maxlength="20"
-                        placeholder="YOUR NAME"
-                        autocomplete="off"
-                    >
-
-                    <button id="saveScoreBtn">
-                        SAVE SCORE
-                    </button>
-
-                    <div id="saveError" class="error"></div>
-                    <div id="saveLoading" class="loading hidden">
-                        SAVING SCORE...
-                    </div>
-
-                </div>
-
-                <div id="leaderboard" class="leaderboard hidden">
-                    <div class="leaderboard-title">
-                        TOP GARDENERS
-                    </div>
-
-                    <div id="leaderboardRows"></div>
-                </div>
-
-                <br>
-
-                <button id="restartBtn">
-                    PLAY AGAIN
-                </button>
-
-            </div>
-        </div>
-
-        <!-- PAUSE -->
-        <div class="overlay hidden" id="pauseOverlay">
-            <div class="panel">
-                <h1>PAUSED</h1>
-                <p>THE GARDEN IS WAITING.</p>
-                <button id="resumeBtn">RESUME</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="controls">
-
-        <button class="control-btn" id="leftBtn">←</button>
-
-        <button class="control-btn fire" id="fireBtn">
-            FIRE
+        <button class="press-start" id="startButton">
+            PRESS START
         </button>
 
-        <button class="control-btn" id="rightBtn">→</button>
-
-    </div>
-
-    <div class="footer">
-        <span>FLWR // 2026</span>
-        <span>P = PAUSE</span>
     </div>
 
 </div>
 
 
+
+<!-- =======================================================
+     MAIN SITE
+======================================================= -->
+
+<div id="site">
+
+
+<header>
+
+    <a href="#home" class="header-logo">
+
+        <svg
+            class="flwr-logo"
+            viewBox="0 0 2830 1034"
+            xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M619,99 530,101 177,103 140,105 143,646 145,732 145,848 147,886 304,884 306,570 308,568 500,567 557,565 596,566 603,564 606,465 605,413 306,411 306,258 311,256 617,256 619,231 Z"/>
+
+            <path d="M720,104 719,738 721,785 721,885 936,887 1197,887 1199,787 1198,735 888,735 886,733 887,513 885,109 883,105 Z"/>
+
+            <path d="M2155,104 1990,105 1977,161 1975,164 1973,177 1971,180 1928,353 1926,356 1925,365 1922,372 1916,400 1914,403 1908,432 1906,435 1900,463 1898,466 1892,495 1890,498 1868,589 1865,596 1859,624 1857,627 1855,640 1853,643 1847,671 1844,678 1841,677 1837,654 1814,561 1812,547 1806,526 1800,494 1798,491 1796,477 1790,456 1788,442 1785,434 1784,424 1782,421 1780,407 1778,403 1776,389 1773,381 1772,371 1770,368 1768,353 1766,350 1764,336 1761,328 1760,318 1757,310 1756,300 1750,276 1722,274 1576,274 1574,276 1572,291 1569,299 1568,309 1565,317 1564,327 1561,335 1560,345 1557,353 1556,363 1553,371 1552,381 1549,389 1548,399 1545,407 1544,417 1541,425 1540,435 1537,443 1527,493 1525,496 1523,511 1521,515 1511,565 1509,568 1507,583 1505,587 1503,601 1493,641 1488,669 1484,672 1483,684 1481,687 1478,685 1476,672 1474,669 1472,655 1469,648 1464,621 1462,618 1452,570 1449,563 1448,553 1445,546 1428,469 1424,457 1424,452 1416,423 1416,418 1412,406 1407,380 1405,377 1403,363 1400,355 1399,346 1397,343 1395,329 1393,326 1391,312 1389,309 1387,295 1385,292 1383,278 1380,270 1363,193 1359,181 1359,176 1356,168 1343,108 1335,107 1229,109 1170,112 1169,117 1175,138 1176,147 1229,361 1257,466 1335,778 1337,781 1358,869 1363,883 1520,887 1595,886 1602,855 1604,839 1606,835 1608,819 1610,815 1612,799 1614,795 1616,779 1618,775 1620,759 1622,755 1624,739 1626,735 1628,719 1630,715 1632,699 1634,695 1636,678 1638,675 1640,658 1642,654 1659,564 1661,562 1663,564 1671,608 1673,611 1679,647 1686,675 1687,686 1690,694 1691,705 1706,772 1707,783 1714,811 1715,822 1722,850 1724,865 1726,869 1728,885 1730,887 1839,888 1960,887 1963,875 1963,868 1967,857 1981,797 1983,794 1983,789 1993,749 1995,746 1996,737 1999,730 2000,721 2003,714 2004,705 2007,698 2008,689 2011,682 2021,637 2027,619 2028,610 2049,526 2052,519 2053,510 2056,503 2068,455 2069,446 2072,439 2073,430 2076,423 2086,378 2088,375 2090,362 2092,359 2102,315 2104,312 2106,299 2108,296 2147,136 2149,133 2150,124 2153,118 Z"/>
+
+            <path d="M2228,101 2228,879 2232,881 2250,880 2312,883 2381,883 2384,810 2385,648 2386,638 2388,636 2399,651 2497,803 2506,819 2551,887 2583,887 2722,880 2708,856 2702,849 2651,769 2633,744 2541,603 2543,600 2562,591 2590,571 2619,542 2631,526 2647,499 2655,483 2668,445 2675,411 2677,391 2676,339 2671,312 2663,283 2661,281 2660,275 2652,256 2632,219 2604,182 2583,161 2550,137 2528,125 2485,109 2460,104 2429,103 2359,104 Z M2394,260 2410,261 2433,268 2448,276 2463,287 2481,307 2492,324 2497,336 2502,357 2502,389 2500,402 2493,422 2483,439 2467,457 2451,469 2437,476 2416,482 2391,481 2391,264 Z"/>
+
+        </svg>
+
+    </a>
+
+
+    <nav class="header-nav">
+
+        <button
+            class="nav-button"
+            onclick="goTo('products')">
+            PRODUCTS
+        </button>
+
+        <a href="GAME/" class="nav-button">
+    GAME
+</a>
+
+        <button
+            class="nav-button"
+            onclick="goTo('about')">
+            ABOUT
+        </button>
+
+        <button
+            class="nav-button cart-button"
+            onclick="openCart()">
+
+            CART
+
+            <span
+                class="cart-count"
+                id="cartCount">
+                0
+            </span>
+
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =======================================================
+     HERO
+======================================================= -->
+
+<section class="hero" id="home">
+
+    <div class="hero-inner">
+
+        <svg
+            class="flwr-logo hero-logo"
+            viewBox="0 0 2830 1034"
+            xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M619,99 530,101 177,103 140,105 143,646 145,732 145,848 147,886 304,884 306,570 308,568 500,567 557,565 596,566 603,564 606,465 605,413 306,411 306,258 311,256 617,256 619,231 Z"/>
+
+            <path d="M720,104 719,738 721,785 721,885 936,887 1197,887 1199,787 1198,735 888,735 886,733 887,513 885,109 883,105 Z"/>
+
+            <path d="M2155,104 1990,105 1977,161 1975,164 1973,177 1971,180 1928,353 1926,356 1925,365 1922,372 1916,400 1914,403 1908,432 1906,435 1900,463 1898,466 1892,495 1890,498 1868,589 1865,596 1859,624 1857,627 1855,640 1853,643 1847,671 1844,678 1841,677 1837,654 1814,561 1812,547 1806,526 1800,494 1798,491 1796,477 1790,456 1788,442 1785,434 1784,424 1782,421 1780,407 1778,403 1776,389 1773,381 1772,371 1770,368 1768,353 1766,350 1764,336 1761,328 1760,318 1757,310 1756,300 1750,276 1722,274 1576,274 1574,276 1572,291 1569,299 1568,309 1565,317 1564,327 1561,335 1560,345 1557,353 1556,363 1553,371 1552,381 1549,389 1548,399 1545,407 1544,417 1541,425 1540,435 1537,443 1527,493 1525,496 1523,511 1521,515 1511,565 1509,568 1507,583 1505,587 1503,601 1493,641 1488,669 1484,672 1483,684 1481,687 1478,685 1476,672 1474,669 1472,655 1469,648 1464,621 1462,618 1452,570 1449,563 1448,553 1445,546 1428,469 1424,457 1424,452 1416,423 1416,418 1412,406 1407,380 1405,377 1403,363 1400,355 1399,346 1397,343 1395,329 1393,326 1391,312 1389,309 1387,295 1385,292 1383,278 1380,270 1363,193 1359,181 1359,176 1356,168 1343,108 1335,107 1229,109 1170,112 1169,117 1175,138 1176,147 1229,361 1257,466 1335,778 1337,781 1358,869 1363,883 1520,887 1595,886 1602,855 1604,839 1606,835 1608,819 1610,815 1612,799 1614,795 1616,779 1618,775 1620,759 1622,755 1624,739 1626,735 1628,719 1630,715 1632,699 1634,695 1636,678 1638,675 1640,658 1642,654 1659,564 1661,562 1663,564 1671,608 1673,611 1679,647 1686,675 1687,686 1690,694 1691,705 1706,772 1707,783 1714,811 1715,822 1722,850 1724,865 1726,869 1728,885 1730,887 1839,888 1960,887 1963,875 1963,868 1967,857 1981,797 1983,794 1983,789 1993,749 1995,746 1996,737 1999,730 2000,721 2003,714 2004,705 2007,698 2008,689 2011,682 2021,637 2027,619 2028,610 2049,526 2052,519 2053,510 2056,503 2068,455 2069,446 2072,439 2073,430 2076,423 2086,378 2088,375 2090,362 2092,359 2102,315 2104,312 2106,299 2108,296 2147,136 2149,133 2150,124 2153,118 Z"/>
+
+            <path d="M2228,101 2228,879 2232,881 2250,880 2312,883 2381,883 2384,810 2385,648 2386,638 2388,636 2399,651 2497,803 2506,819 2551,887 2583,887 2722,880 2708,856 2702,849 2651,769 2633,744 2541,603 2543,600 2562,591 2590,571 2619,542 2631,526 2647,499 2655,483 2668,445 2675,411 2677,391 2676,339 2671,312 2663,283 2661,281 2660,275 2652,256 2632,219 2604,182 2583,161 2550,137 2528,125 2485,109 2460,104 2429,103 2359,104 Z M2394,260 2410,261 2433,268 2448,276 2463,287 2481,307 2492,324 2497,336 2502,357 2502,389 2500,402 2493,422 2483,439 2467,457 2451,469 2437,476 2416,482 2391,481 2391,264 Z"/>
+
+        </svg>
+
+        <div class="hero-subtitle">
+            EST. 2017 · INDEPENDENT CREATIVE BRAND
+        </div>
+
+    </div>
+
+    <div class="scroll-indicator">
+        SCROLL
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PRODUCTS
+======================================================= -->
+
+<section
+    class="content-section"
+    id="products">
+
+    <h2 class="big-title">
+        DROPS.
+    </h2>
+
+
+    <div class="products">
+
+
+        <article class="product">
+
+            <div class="product-number">
+                FLWR / 001
+            </div>
+
+            <div class="product-visual">
+
+                <img
+    src="58A731D5-BDC4-4FE4-BF30-28A8BCD277B6.png"
+    alt="FLWR Gorilla Glue #4"
+    class="product-image">
+
+                    <path d="M619,99 530,101 177,103 140,105 143,646 145,732 145,848 147,886 304,884 306,570 308,568 500,567 557,565 596,566 603,564 606,465 605,413 306,411 306,258 311,256 617,256 619,231 Z"/>
+
+                    <path d="M720,104 719,738 721,785 721,885 936,887 1197,887 1199,787 1198,735 888,735 886,733 887,513 885,109 883,105 Z"/>
+
+                    <path d="M2155,104 1990,105 1977,161 1975,164 1973,177 1971,180 1928,353 1926,356 1925,365 1922,372 1916,400 1914,403 1908,432 1906,435 1900,463 1898,466 1892,495 1890,498 1868,589 1865,596 1859,624 1857,627 1855,640 1853,643 1847,671 1844,678 1841,677 1837,654 1814,561 1812,547 1806,526 1800,494 1798,491 1796,477 1790,456 1788,442 1785,434 1784,424 1782,421 1780,407 1778,403 1776,389 1773,381 1772,371 1770,368 1768,353 1766,350 1764,336 1761,328 1760,318 1757,310 1756,300 1750,276 1722,274 1576,274 1574,276 1572,291 1569,299 1568,309 1565,317 1564,327 1561,335 1560,345 1557,353 1556,363 1553,371 1552,381 1549,389 1548,399 1545,407 1544,417 1541,425 1540,435 1537,443 1527,493 1525,496 1523,511 1521,515 1511,565 1509,568 1507,583 1505,587 1503,601 1493,641 1488,669 1484,672 1483,684 1481,687 1478,685 1476,672 1474,669 1472,655 1469,648 1464,621 1462,618 1452,570 1449,563 1448,553 1445,546 1428,469 1424,457 1424,452 1416,423 1416,418 1412,406 1407,380 1405,377 1403,363 1400,355 1399,346 1397,343 1395,329 1393,326 1391,312 1389,309 1387,295 1385,292 1383,278 1380,270 1363,193 1359,181 1359,176 1356,168 1343,108 1335,107 1229,109 1170,112 1169,117 1175,138 1176,147 1229,361 1257,466 1335,778 1337,781 1358,869 1363,883 1520,887 1595,886 1602,855 1604,839 1606,835 1608,819 1610,815 1612,799 1614,795 1616,779 1618,775 1620,759 1622,755 1624,739 1626,735 1628,719 1630,715 1632,699 1634,695 1636,678 1638,675 1640,658 1642,654 1659,564 1661,562 1663,564 1671,608 1673,611 1679,647 1686,675 1687,686 1690,694 1691,705 1706,772 1707,783 1714,811 1715,822 1722,850 1724,865 1726,869 1728,885 1730,887 1839,888 1960,887 1963,875 1963,868 1967,857 1981,797 1983,794 1983,789 1993,749 1995,746 1996,737 1999,730 2000,721 2003,714 2004,705 2007,698 2008,689 2011,682 2021,637 2027,619 2028,610 2049,526 2052,519 2053,510 2056,503 2068,455 2069,446 2072,439 2073,430 2076,423 2086,378 2088,375 2090,362 2092,359 2102,315 2104,312 2106,299 2108,296 2147,136 2149,133 2150,124 2153,118 Z"/>
+
+                    <path d="M2228,101 2228,879 2232,881 2250,880 2312,883 2381,883 2384,810 2385,648 2386,638 2388,636 2399,651 2497,803 2506,819 2551,887 2583,887 2722,880 2708,856 2702,849 2651,769 2633,744 2541,603 2543,600 2562,591 2590,571 2619,542 2631,526 2647,499 2655,483 2668,445 2675,411 2677,391 2676,339 2671,312 2663,283 2661,281 2660,275 2652,256 2632,219 2604,182 2583,161 2550,137 2528,125 2485,109 2460,104 2429,103 2359,104 Z M2394,260 2410,261 2433,268 2448,276 2463,287 2481,307 2492,324 2497,336 2502,357 2502,389 2500,402 2493,422 2483,439 2467,457 2451,469 2437,476 2416,482 2391,481 2391,264 Z"/>
+
+                </svg>
+
+            </div>
+
+            <div class="product-info">
+
+                <div class="product-name">
+                    GG#4
+                </div>
+
+                <div class="product-status">
+                    COMING SOON
+                </div>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="product">
+
+            <div class="product-number">
+                FLWR / 002
+            </div>
+
+            <div class="product-visual">
+
+                <div style="
+                    font-size:clamp(70px,10vw,150px);
+                    font-weight:900;
+                    letter-spacing:-8px;">
+                    002
+                </div>
+
+            </div>
+
+            <div class="product-info">
+
+                <div class="product-name">
+                    FLWR SERIES 002
+                </div>
+
+                <div class="product-status">
+                    SOON
+                </div>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     ABOUT
+======================================================= -->
+
+<section
+    class="content-section manifesto"
+    id="about">
+
+    <div>
+
+        <h2 class="big-title">
+            FLWR.
+        </h2>
+
+        <p class="manifesto-text">
+
+            WE MAKE OBJECTS,
+            IDEAS AND CULTURE
+            FOR PEOPLE WHO
+            CHOOSE TO GROW
+            DIFFERENTLY.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     FINAL
+======================================================= -->
+
+<section class="final">
+
+    <div class="final-title">
+
+        SEE<br>
+        YOU<br>
+        NEXT 
+        BATCH.
+
+    </div>
+
+    <a
+        class="final-button"
+        href="mailto:hola@flwr.com">
+
+        CONTACT FLWR
+
+    </a>
+
+</section>
+
+
+
+<footer>
+
+    <div>
+        © 2017 FLWR®
+    </div>
+
+    <div class="footer-links">
+
+        <a href="@flwr.med">
+            INSTAGRAM
+        </a>
+
+        <a href="#">
+            TIKTOK
+        </a>
+
+    </div>
+
+</footer>
+
+</div>
+
+
+
+<!-- =======================================================
+     CART
+======================================================= -->
+
+<aside
+    class="cart-panel"
+    id="cartPanel">
+
+    <div class="cart-header">
+
+        <div class="cart-title">
+            YOUR CART
+        </div>
+
+        <button
+            class="close-cart"
+            onclick="closeCart()">
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="cart-empty">
+
+        <strong>
+            EMPTY
+        </strong>
+
+        <span>
+            NO PRODUCTS YET.
+        </span>
+
+    </div>
+
+</aside>
+
+
+
 <script>
 
 /* =========================================================
-   FLWR INVADERS
-   SUPABASE LEADERBOARD
-   ========================================================= */
+   START EXPERIENCE
+========================================================= */
 
-/* ---------- SUPABASE ---------- */
+const intro =
+    document.getElementById("intro");
 
-const SUPABASE_URL =
-    "https://hjxnfgvrqbfwuwhuepfb.supabase.co";
+const site =
+    document.getElementById("site");
 
-const SUPABASE_KEY =
-    "sb_publishable_di8dKicHP0LorgP83Ix2lQ_wMpJ6r-0";
-
-const LEADERBOARD_ENDPOINT =
-    SUPABASE_URL + "/rest/v1/leaderboard";
+const startButton =
+    document.getElementById("startButton");
 
 
-/* ---------- CANVAS ---------- */
+function startExperience(){
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+    intro.classList.add("hide");
 
-const W = canvas.width;
-const H = canvas.height;
+    site.classList.add("visible");
 
-
-/* ---------- UI ---------- */
-
-const scoreEl = document.getElementById("score");
-const waveEl = document.getElementById("wave");
-const livesEl = document.getElementById("lives");
-
-const startOverlay =
-    document.getElementById("startOverlay");
-
-const gameOverOverlay =
-    document.getElementById("gameOverOverlay");
-
-const pauseOverlay =
-    document.getElementById("pauseOverlay");
-
-const startBtn =
-    document.getElementById("startBtn");
-
-const restartBtn =
-    document.getElementById("restartBtn");
-
-const resumeBtn =
-    document.getElementById("resumeBtn");
-
-const finalScore =
-    document.getElementById("finalScore");
-
-const nameInput =
-    document.getElementById("nameInput");
-
-const saveScoreBtn =
-    document.getElementById("saveScoreBtn");
-
-const saveSection =
-    document.getElementById("saveSection");
-
-const saveError =
-    document.getElementById("saveError");
-
-const saveLoading =
-    document.getElementById("saveLoading");
-
-const leaderboard =
-    document.getElementById("leaderboard");
-
-const leaderboardRows =
-    document.getElementById("leaderboardRows");
-
-
-/* ---------- GAME STATE ---------- */
-
-let gameRunning = false;
-let paused = false;
-let gameOver = false;
-
-let score = 0;
-let wave = 1;
-let lives = 3;
-
-let shake = 0;
-
-let lastTime = 0;
-
-const keys = {
-    left:false,
-    right:false,
-    fire:false
-};
-
-
-/* ---------- PLAYER ---------- */
-
-const player = {
-    x:W / 2,
-    y:H - 85,
-    width:60,
-    height:60,
-    speed:480,
-    cooldown:0
-};
-
-
-/* ---------- ARRAYS ---------- */
-
-let bullets = [];
-let enemyBullets = [];
-let enemies = [];
-let particles = [];
-
-
-/* ---------- ENEMY SETTINGS ---------- */
-
-const enemyTypes = [
-    {
-        type:"bug",
-        points:100,
-        hp:1,
-        speed:34
-    },
-    {
-        type:"beetle",
-        points:150,
-        hp:2,
-        speed:28
-    },
-    {
-        type:"moth",
-        points:200,
-        hp:1,
-        speed:45
-    },
-    {
-        type:"bossbug",
-        points:300,
-        hp:3,
-        speed:20
-    }
-];
-
-
-/* ---------- BACKGROUND ---------- */
-
-let stars = [];
-
-for(let i=0;i<150;i++){
-
-    stars.push({
-        x:Math.random()*W,
-        y:Math.random()*H,
-        size:Math.random()*2+0.5,
-        alpha:Math.random()*.5+.15
-    });
+    document.body.style.overflowY = "auto";
 
 }
 
 
-/* =========================================================
-   UTILITIES
-   ========================================================= */
-
-function random(min,max){
-    return Math.random()*(max-min)+min;
-}
-
-function clamp(value,min,max){
-    return Math.max(min,Math.min(max,value));
-}
-
-function formatScore(value){
-    return String(Math.max(0,value)).padStart(6,"0");
-}
-
-
-/* =========================================================
-   UI
-   ========================================================= */
-
-function updateUI(){
-
-    scoreEl.textContent = formatScore(score);
-    waveEl.textContent = String(wave).padStart(2,"0");
-    livesEl.textContent = String(lives).padStart(2,"0");
-
-}
-
-
-/* =========================================================
-   DRAW BACKGROUND
-   ========================================================= */
-
-function drawBackground(){
-
-    ctx.fillStyle="#080808";
-    ctx.fillRect(0,0,W,H);
-
-    /* paper grain */
-
-    for(let i=0;i<700;i++){
-
-        const x=Math.random()*W;
-        const y=Math.random()*H;
-
-        ctx.fillStyle =
-            Math.random()>.5
-            ? "rgba(238,233,220,.025)"
-            : "rgba(0,0,0,.08)";
-
-        ctx.fillRect(
-            x,
-            y,
-            Math.random()*2+1,
-            Math.random()*2+1
-        );
-
-    }
-
-    /* stars / dust */
-
-    for(const star of stars){
-
-        ctx.globalAlpha=star.alpha;
-
-        ctx.fillStyle="#eee9dc";
-
-        ctx.fillRect(
-            star.x,
-            star.y,
-            star.size,
-            star.size
-        );
-
-    }
-
-    ctx.globalAlpha=1;
-
-    /* ground line */
-
-    ctx.strokeStyle="rgba(238,233,220,.15)";
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,H-35);
-    ctx.lineTo(W,H-35);
-
-    ctx.stroke();
-
-}
-
-
-/* =========================================================
-   FLOWER
-   ========================================================= */
-
-function drawFlower(x,y,size,playerFlower=true){
-
-    ctx.save();
-
-    ctx.translate(x,y);
-
-    const s=size;
-
-    /* stem */
-
-    ctx.strokeStyle="#eee9dc";
-    ctx.lineWidth=5*s;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,10*s);
-    ctx.lineTo(0,34*s);
-
-    ctx.stroke();
-
-    /* leaves */
-
-    ctx.lineWidth=3*s;
-
-    ctx.beginPath();
-
-    ctx.moveTo(-2*s,25*s);
-    ctx.quadraticCurveTo(
-        -20*s,
-        15*s,
-        -22*s,
-        28*s
-    );
-
-    ctx.moveTo(2*s,31*s);
-
-    ctx.quadraticCurveTo(
-        20*s,
-        22*s,
-        23*s,
-        34*s
-    );
-
-    ctx.stroke();
-
-    /* petals */
-
-    const petals=8;
-
-    for(let i=0;i<petals;i++){
-
-        const a=(Math.PI*2/petals)*i;
-
-        const px=Math.cos(a)*21*s;
-        const py=Math.sin(a)*21*s;
-
-        ctx.save();
-
-        ctx.translate(px,py);
-        ctx.rotate(a);
-
-        ctx.fillStyle="#111";
-
-        ctx.strokeStyle="#eee9dc";
-        ctx.lineWidth=3*s;
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            0,
-            0,
-            15*s,
-            24*s,
-            0,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.restore();
-
-    }
-
-    /* center */
-
-    ctx.fillStyle="#111";
-    ctx.strokeStyle="#eee9dc";
-    ctx.lineWidth=3*s;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        0,
-        20*s,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-    ctx.stroke();
-
-
-    /* X EYES */
-
-    ctx.strokeStyle="#eee9dc";
-    ctx.lineWidth=3.5*s;
-    ctx.lineCap="round";
-
-    /* left eye */
-
-    ctx.beginPath();
-
-    ctx.moveTo(-12*s,-8*s);
-    ctx.lineTo(-3*s,1*s);
-
-    ctx.moveTo(-3*s,-8*s);
-    ctx.lineTo(-12*s,1*s);
-
-    ctx.stroke();
-
-
-    /* right eye */
-
-    ctx.beginPath();
-
-    ctx.moveTo(3*s,-8*s);
-    ctx.lineTo(12*s,1*s);
-
-    ctx.moveTo(12*s,-8*s);
-    ctx.lineTo(3*s,1*s);
-
-    ctx.stroke();
-
-
-    /* smile */
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        2*s,
-        8*s,
-        .15*Math.PI,
-        .85*Math.PI
-    );
-
-    ctx.stroke();
-
-
-    ctx.restore();
-
-}
-
-
-/* =========================================================
-   ENEMIES
-   ========================================================= */
-
-function drawEnemy(enemy){
-
-    ctx.save();
-
-    ctx.translate(enemy.x,enemy.y);
-
-    const s=enemy.size;
-
-    ctx.strokeStyle="#eee9dc";
-    ctx.fillStyle="#111";
-    ctx.lineWidth=3;
-
-    if(enemy.kind==="bug"){
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            0,0,
-            22*s,
-            16*s,
-            0,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        /* eyes */
-
-        drawX(-8*s,-3*s,3*s);
-        drawX(8*s,-3*s,3*s);
-
-        /* legs */
-
-        for(let i=-1;i<=1;i++){
-
-            ctx.beginPath();
-
-            ctx.moveTo(-16*s,i*7*s);
-            ctx.lineTo(-28*s,i*12*s);
-
-            ctx.moveTo(16*s,i*7*s);
-            ctx.lineTo(28*s,i*12*s);
-
-            ctx.stroke();
+startButton.addEventListener(
+    "click",
+    startExperience
+);
+
+intro.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === intro ||
+            event.target.closest(".intro-content")
+        ){
+
+            startExperience();
 
         }
 
     }
-
-    else if(enemy.kind==="beetle"){
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            0,
-            23*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,-21*s);
-        ctx.lineTo(0,21*s);
-
-        ctx.stroke();
-
-        drawX(-9*s,-4*s,3*s);
-        drawX(9*s,-4*s,3*s);
-
-    }
-
-    else if(enemy.kind==="moth"){
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            -13*s,
-            0,
-            17*s,
-            25*s,
-            -.4,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            13*s,
-            0,
-            17*s,
-            25*s,
-            .4,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            0,
-            9*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        drawX(-4*s,-3*s,2*s);
-        drawX(4*s,-3*s,2*s);
-
-    }
-
-    else{
-
-        /* boss bug */
-
-        ctx.beginPath();
-
-        ctx.roundRect(
-            -27*s,
-            -23*s,
-            54*s,
-            46*s,
-            10*s
-        );
-
-        ctx.fill();
-        ctx.stroke();
-
-        drawX(-10*s,-4*s,4*s);
-        drawX(10*s,-4*s,4*s);
-
-        ctx.beginPath();
-
-        ctx.moveTo(-12*s,10*s);
-        ctx.lineTo(12*s,10*s);
-
-        ctx.stroke();
-
-    }
-
-    ctx.restore();
-
-
-    /* health bar */
-
-    if(enemy.hpMax>1){
-
-        const width=45*enemy.size;
-
-        ctx.fillStyle="#222";
-
-        ctx.fillRect(
-            enemy.x-width/2,
-            enemy.y-34*enemy.size,
-            width,
-            5
-        );
-
-        ctx.fillStyle="#eee9dc";
-
-        ctx.fillRect(
-            enemy.x-width/2,
-            enemy.y-34*enemy.size,
-            width*(enemy.hp/enemy.hpMax),
-            5
-        );
-
-    }
-
-}
-
-function drawX(x,y,size){
-
-    ctx.beginPath();
-
-    ctx.moveTo(x-size,y-size);
-    ctx.lineTo(x+size,y+size);
-
-    ctx.moveTo(x+size,y-size);
-    ctx.lineTo(x-size,y+size);
-
-    ctx.stroke();
-
-}
+);
 
 
 /* =========================================================
-   WAVES
-   ========================================================= */
+   NAVIGATION
+========================================================= */
 
-function createWave(){
+function goTo(id){
 
-    enemies=[];
+    const element =
+        document.getElementById(id);
 
-    const rows=Math.min(
-        3+Math.floor(wave/2),
-        6
-    );
+    if(element){
 
-    const cols=8;
-
-    const spacingX=88;
-    const spacingY=65;
-
-    const startX=
-        W/2 -
-        ((cols-1)*spacingX)/2;
-
-    for(let row=0;row<rows;row++){
-
-        for(let col=0;col<cols;col++){
-
-            const typeIndex=
-                Math.min(
-                    Math.floor(wave/3),
-                    enemyTypes.length-1
-                );
-
-            const type=
-                enemyTypes[
-                    Math.max(
-                        0,
-                        Math.floor(
-                            Math.random()*(typeIndex+1)
-                        )
-                    )
-                ];
-
-            enemies.push({
-
-                x:startX+col*spacingX,
-                y:75+row*spacingY,
-
-                homeX:startX+col*spacingX,
-                homeY:75+row*spacingY,
-
-                width:45,
-                height:45,
-
-                size:1,
-
-                hp:type.hp,
-                hpMax:type.hp,
-
-                points:type.points,
-
-                speed:type.speed,
-
-                kind:type.type,
-
-                phase:Math.random()*Math.PI*2,
-
-                alive:true
-
-            });
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   PARTICLES
-   ========================================================= */
-
-function explosion(x,y,count=12){
-
-    for(let i=0;i<count;i++){
-
-        const a=Math.random()*Math.PI*2;
-        const speed=random(60,230);
-
-        particles.push({
-
-            x,
-            y,
-
-            vx:Math.cos(a)*speed,
-            vy:Math.sin(a)*speed,
-
-            life:random(.3,.8),
-            maxLife:.8,
-
-            size:random(1,4)
-
+        element.scrollIntoView({
+            behavior:"smooth"
         });
 
     }
@@ -1188,1017 +1463,46 @@ function explosion(x,y,count=12){
 
 
 /* =========================================================
-   SHOOTING
-   ========================================================= */
+   CART
+========================================================= */
 
-function playerShoot(){
+const cart =
+    document.getElementById("cartPanel");
 
-    if(player.cooldown>0) return;
 
-    bullets.push({
+function openCart(){
 
-        x:player.x,
-        y:player.y-34,
+    cart.classList.add("open");
 
-        vy:-700,
+}
 
-        radius:4
 
-    });
+function closeCart(){
 
-    player.cooldown=.22;
+    cart.classList.remove("open");
 
 }
 
 
 /* =========================================================
-   ENEMY SHOOTING
-   ========================================================= */
+   ESCAPE CLOSES CART
+========================================================= */
 
-function enemyShoot(){
-
-    if(!enemies.length) return;
-
-    const candidates=
-        enemies.filter(e=>e.alive);
-
-    if(!candidates.length) return;
-
-    const enemy=
-        candidates[
-            Math.floor(
-                Math.random()*candidates.length
-            )
-        ];
-
-    enemyBullets.push({
-
-        x:enemy.x,
-        y:enemy.y+20,
-
-        vy:random(180,290)+wave*10,
-
-        radius:5
-
-    });
-
-}
-
-
-/* =========================================================
-   COLLISION
-   ========================================================= */
-
-function circleRectCollision(circle,rect){
-
-    const closestX=clamp(
-        circle.x,
-        rect.x-rect.width/2,
-        rect.x+rect.width/2
-    );
-
-    const closestY=clamp(
-        circle.y,
-        rect.y-rect.height/2,
-        rect.y+rect.height/2
-    );
-
-    const dx=circle.x-closestX;
-    const dy=circle.y-closestY;
-
-    return dx*dx+dy*dy<
-        circle.radius*circle.radius;
-
-}
-
-
-/* =========================================================
-   GAME START
-   ========================================================= */
-
-function startGame(){
-
-    score=0;
-    wave=1;
-    lives=3;
-
-    player.x=W/2;
-
-    bullets=[];
-    enemyBullets=[];
-    particles=[];
-
-    gameOver=false;
-    paused=false;
-    gameRunning=true;
-
-    startOverlay.classList.add("hidden");
-    gameOverOverlay.classList.add("hidden");
-    pauseOverlay.classList.add("hidden");
-
-    saveSection.classList.remove("hidden");
-    leaderboard.classList.add("hidden");
-
-    saveError.textContent="";
-    saveLoading.classList.add("hidden");
-    saveScoreBtn.disabled=false;
-
-    createWave();
-
-    updateUI();
-
-}
-
-
-/* =========================================================
-   GAME OVER
-   ========================================================= */
-
-function endGame(){
-
-    gameRunning=false;
-    gameOver=true;
-
-    finalScore.textContent=
-        formatScore(score);
-
-    gameOverOverlay.classList.remove("hidden");
-
-    nameInput.value="";
-
-    leaderboard.classList.add("hidden");
-
-}
-
-
-/* =========================================================
-   PAUSE
-   ========================================================= */
-
-function togglePause(){
-
-    if(!gameRunning || gameOver) return;
-
-    paused=!paused;
-
-    if(paused){
-
-        pauseOverlay.classList.remove("hidden");
-
-    }else{
-
-        pauseOverlay.classList.add("hidden");
-
-    }
-
-}
-
-
-/* =========================================================
-   UPDATE
-   ========================================================= */
-
-function update(dt){
-
-    if(!gameRunning || paused) return;
-
-
-    /* player */
-
-    if(keys.left){
-
-        player.x-=player.speed*dt;
-
-    }
-
-    if(keys.right){
-
-        player.x+=player.speed*dt;
-
-    }
-
-    player.x=
-        clamp(
-            player.x,
-            40,
-            W-40
-        );
-
-
-    /* fire */
-
-    if(keys.fire){
-
-        playerShoot();
-
-    }
-
-    player.cooldown=
-        Math.max(
-            0,
-            player.cooldown-dt
-        );
-
-
-    /* bullets */
-
-    for(let i=bullets.length-1;i>=0;i--){
-
-        const b=bullets[i];
-
-        b.y+=b.vy*dt;
-
-        if(b.y<-20){
-
-            bullets.splice(i,1);
-            continue;
-
-        }
-
-
-        let hit=false;
-
-        for(const enemy of enemies){
-
-            if(!enemy.alive) continue;
-
-            const dx=b.x-enemy.x;
-            const dy=b.y-enemy.y;
-
-            const distance=
-                Math.sqrt(dx*dx+dy*dy);
-
-            if(distance<30){
-
-                enemy.hp--;
-
-                explosion(
-                    b.x,
-                    b.y,
-                    5
-                );
-
-                bullets.splice(i,1);
-
-                hit=true;
-
-                if(enemy.hp<=0){
-
-                    enemy.alive=false;
-
-                    score+=enemy.points;
-
-                    explosion(
-                        enemy.x,
-                        enemy.y,
-                        18
-                    );
-
-                }
-
-                break;
-
-            }
-
-        }
-
-        if(hit) continue;
-
-    }
-
-
-    /* enemy movement */
-
-    for(const enemy of enemies){
-
-        if(!enemy.alive) continue;
-
-        enemy.x=
-            enemy.homeX+
-            Math.sin(
-                performance.now()/900+
-                enemy.phase
-            )*22;
-
-        enemy.y+=
-            Math.sin(
-                performance.now()/700+
-                enemy.phase
-            )*0.12;
-
-        if(
-            enemy.y>
-            H-140
-        ){
-
-            enemy.alive=false;
-
-            lives--;
-
-            shake=12;
-
-            explosion(
-                enemy.x,
-                H-100,
-                18
-            );
-
-            if(lives<=0){
-
-                updateUI();
-                endGame();
-                return;
-
-            }
-
-        }
-
-    }
-
-
-    /* enemy bullets */
-
-    for(let i=enemyBullets.length-1;i>=0;i--){
-
-        const b=enemyBullets[i];
-
-        b.y+=b.vy*dt;
-
-        if(b.y>H+30){
-
-            enemyBullets.splice(i,1);
-            continue;
-
-        }
-
-        const dx=b.x-player.x;
-        const dy=b.y-player.y;
-
-        if(
-            Math.sqrt(dx*dx+dy*dy)<32
-        ){
-
-            enemyBullets.splice(i,1);
-
-            lives--;
-
-            shake=14;
-
-            explosion(
-                player.x,
-                player.y,
-                18
-            );
-
-            if(lives<=0){
-
-                updateUI();
-                endGame();
-                return;
-
-            }
-
-        }
-
-    }
-
-
-    /* random enemy shooting */
-
-    if(
-        Math.random()<
-        (0.35+wave*.02)*dt
-    ){
-
-        enemyShoot();
-
-    }
-
-
-    /* particles */
-
-    for(let i=particles.length-1;i>=0;i--){
-
-        const p=particles[i];
-
-        p.x+=p.vx*dt;
-        p.y+=p.vy*dt;
-
-        p.vy+=180*dt;
-
-        p.life-=dt;
-
-        if(p.life<=0){
-
-            particles.splice(i,1);
-
-        }
-
-    }
-
-
-    /* wave complete */
-
-    if(
-        enemies.length &&
-        enemies.every(e=>!e.alive)
-    ){
-
-        wave++;
-
-        score+=500*wave;
-
-        createWave();
-
-        shake=8;
-
-    }
-
-
-    shake=Math.max(
-        0,
-        shake-dt*20
-    );
-
-
-    updateUI();
-
-}
-
-
-/* =========================================================
-   DRAW
-   ========================================================= */
-
-function draw(){
-
-    ctx.save();
-
-    let sx=0;
-    let sy=0;
-
-    if(shake>0){
-
-        sx=random(-shake,shake);
-        sy=random(-shake,shake);
-
-    }
-
-    ctx.translate(sx,sy);
-
-    drawBackground();
-
-
-    /* enemies */
-
-    for(const enemy of enemies){
-
-        if(enemy.alive){
-
-            drawEnemy(enemy);
-
-        }
-
-    }
-
-
-    /* player */
-
-    if(gameRunning){
-
-        drawFlower(
-            player.x,
-            player.y,
-            .9,
-            true
-        );
-
-    }
-
-
-    /* player bullets */
-
-    for(const b of bullets){
-
-        ctx.fillStyle="#eee9dc";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            b.x,
-            b.y,
-            b.radius,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
-
-
-    /* enemy bullets */
-
-    for(const b of enemyBullets){
-
-        ctx.strokeStyle="#eee9dc";
-        ctx.lineWidth=3;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            b.x,
-            b.y-7
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y+7
-        );
-
-        ctx.stroke();
-
-    }
-
-
-    /* particles */
-
-    for(const p of particles){
-
-        ctx.globalAlpha=
-            Math.max(
-                0,
-                p.life/p.maxLife
-            );
-
-        ctx.fillStyle="#eee9dc";
-
-        ctx.fillRect(
-            p.x,
-            p.y,
-            p.size,
-            p.size
-        );
-
-    }
-
-    ctx.globalAlpha=1;
-
-    ctx.restore();
-
-}
-
-
-/* =========================================================
-   MAIN LOOP
-   ========================================================= */
-
-function loop(time){
-
-    const dt=
-        Math.min(
-            .033,
-            (time-lastTime)/1000 || 0
-        );
-
-    lastTime=time;
-
-    update(dt);
-    draw();
-
-    requestAnimationFrame(loop);
-
-}
-
-requestAnimationFrame(loop);
-
-
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
-
-window.addEventListener("keydown",(e)=>{
-
-    if(
-        e.code==="ArrowLeft" ||
-        e.code==="KeyA"
-    ){
-
-        keys.left=true;
-
-    }
-
-    if(
-        e.code==="ArrowRight" ||
-        e.code==="KeyD"
-    ){
-
-        keys.right=true;
-
-    }
-
-    if(e.code==="Space"){
-
-        e.preventDefault();
-        keys.fire=true;
-
-    }
-
-    if(e.code==="KeyP" || e.code==="Escape"){
-
-        togglePause();
-
-    }
-
-});
-
-
-window.addEventListener("keyup",(e)=>{
-
-    if(
-        e.code==="ArrowLeft" ||
-        e.code==="KeyA"
-    ){
-
-        keys.left=false;
-
-    }
-
-    if(
-        e.code==="ArrowRight" ||
-        e.code==="KeyD"
-    ){
-
-        keys.right=false;
-
-    }
-
-    if(e.code==="Space"){
-
-        keys.fire=false;
-
-    }
-
-});
-
-
-/* =========================================================
-   MOBILE CONTROLS
-   ========================================================= */
-
-function holdButton(element,key){
-
-    element.addEventListener(
-        "pointerdown",
-        (e)=>{
-
-            e.preventDefault();
-            keys[key]=true;
-
-        }
-    );
-
-    element.addEventListener(
-        "pointerup",
-        (e)=>{
-
-            e.preventDefault();
-            keys[key]=false;
-
-        }
-    );
-
-    element.addEventListener(
-        "pointercancel",
-        ()=>{
-
-            keys[key]=false;
-
-        }
-    );
-
-    element.addEventListener(
-        "pointerleave",
-        ()=>{
-
-            keys[key]=false;
-
-        }
-    );
-
-}
-
-holdButton(
-    document.getElementById("leftBtn"),
-    "left"
-);
-
-holdButton(
-    document.getElementById("rightBtn"),
-    "right"
-);
-
-holdButton(
-    document.getElementById("fireBtn"),
-    "fire"
-);
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-startBtn.addEventListener(
-    "click",
-    startGame
-);
-
-restartBtn.addEventListener(
-    "click",
-    startGame
-);
-
-resumeBtn.addEventListener(
-    "click",
-    togglePause
-);
-
-
-/* =========================================================
-   SUPABASE - SAVE SCORE
-   ========================================================= */
-
-async function saveScore(){
-
-    const name=
-        nameInput.value
-        .trim()
-        .toUpperCase();
-
-    saveError.textContent="";
-
-    if(!name){
-
-        saveError.textContent=
-            "ENTER YOUR NAME.";
-
-        nameInput.focus();
-
-        return;
-
-    }
-
-    if(name.length<1 || name.length>20){
-
-        saveError.textContent=
-            "NAME MUST BE 1–20 CHARACTERS.";
-
-        return;
-
-    }
-
-    saveScoreBtn.disabled=true;
-    saveLoading.classList.remove("hidden");
-
-
-    try{
-
-        const response=
-            await fetch(
-                LEADERBOARD_ENDPOINT,
-                {
-                    method:"POST",
-
-                    headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer "+SUPABASE_KEY,
-                        "Content-Type":
-                            "application/json",
-                        "Prefer":
-                            "return=minimal"
-                    },
-
-                    body:JSON.stringify({
-                        player_name:name,
-                        score:score,
-                        wave:wave
-                    })
-                }
-            );
-
-
-        if(!response.ok){
-
-            const errorText=
-                await response.text();
-
-            throw new Error(errorText);
-
-        }
-
-
-        saveSection.classList.add(
-            "hidden"
-        );
-
-        saveLoading.classList.add(
-            "hidden"
-        );
-
-        await loadLeaderboard();
-
-
-    }catch(error){
-
-        console.error(
-            "Supabase error:",
-            error
-        );
-
-        saveError.textContent=
-            "NO SE PUDO GUARDAR. REVISA LA CONEXIÓN.";
-
-        saveScoreBtn.disabled=false;
-        saveLoading.classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SUPABASE - LOAD LEADERBOARD
-   ========================================================= */
-
-async function loadLeaderboard(){
-
-    leaderboardRows.innerHTML=
-        '<div class="loading">LOADING TOP GARDENERS...</div>';
-
-    leaderboard.classList.remove(
-        "hidden"
-    );
-
-
-    try{
-
-        const url=
-            LEADERBOARD_ENDPOINT+
-            "?select=player_name,score,wave,created_at"+
-            "&order=score.desc"+
-            "&limit=10";
-
-
-        const response=
-            await fetch(
-                url,
-                {
-                    method:"GET",
-
-                    headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer "+SUPABASE_KEY
-                    }
-                }
-            );
-
-
-        if(!response.ok){
-
-            const errorText=
-                await response.text();
-
-            throw new Error(errorText);
-
-        }
-
-
-        const data=
-            await response.json();
-
-
-        if(!data.length){
-
-            leaderboardRows.innerHTML=
-                '<div class="loading">NO SCORES YET.</div>';
-
-            return;
-
-        }
-
-
-        leaderboardRows.innerHTML="";
-
-
-        data.forEach(
-            (entry,index)=>{
-
-                const row=
-                    document.createElement("div");
-
-                row.className="score-row";
-
-                const rank=
-                    document.createElement("div");
-
-                rank.className="rank";
-
-                rank.textContent=
-                    "#"+(index+1);
-
-
-                const name=
-                    document.createElement("div");
-
-                name.className="name";
-
-                name.textContent=
-                    entry.player_name;
-
-
-                const scoreCell=
-                    document.createElement("div");
-
-                scoreCell.className="score";
-
-                scoreCell.textContent=
-                    formatScore(entry.score);
-
-
-                const waveCell=
-                    document.createElement("div");
-
-                waveCell.className="wave";
-
-                waveCell.textContent=
-                    "W"+entry.wave;
-
-
-                row.appendChild(rank);
-                row.appendChild(name);
-                row.appendChild(scoreCell);
-                row.appendChild(waveCell);
-
-                leaderboardRows.appendChild(row);
-
-            }
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "Leaderboard error:",
-            error
-        );
-
-        leaderboardRows.innerHTML=
-            '<div class="error">COULD NOT LOAD LEADERBOARD.</div>';
-
-    }
-
-}
-
-
-/* =========================================================
-   SAVE SCORE BUTTON
-   ========================================================= */
-
-saveScoreBtn.addEventListener(
-    "click",
-    saveScore
-);
-
-
-/* ENTER TO SAVE */
-
-nameInput.addEventListener(
+document.addEventListener(
     "keydown",
-    (e)=>{
+    function(event){
 
-        if(e.key==="Enter"){
+        if(event.key === "Escape"){
 
-            saveScore();
+            closeCart();
 
         }
 
     }
 );
-
-
-/* =========================================================
-   INITIAL STATE
-   ========================================================= */
-
-updateUI();
-
-draw();
 
 </script>
+
 
 </body>
 </html>
