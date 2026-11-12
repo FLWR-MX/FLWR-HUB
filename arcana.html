@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>FLWR® — ARCANA</title>
+
+<style>
+:root {
+  --bg: #090909;
+  --gold: #c5a66a;
+  --cream: #e9dfc9;
+  --muted: #827d70;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: Georgia, serif;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+header {
+  padding: 27px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #28251f;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+header a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 16px;
+  letter-spacing: 4px;
+}
+
+main {
+  width: min(100% - 36px, 650px);
+  margin: auto;
+  padding: 65px 0 55px;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font: 10px Arial, sans-serif;
+  letter-spacing: 5px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: clamp(42px, 10vw, 72px);
+  font-weight: normal;
+  letter-spacing: 5px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  max-width: 350px;
+  margin: 18px auto 35px;
+}
+
+.deck {
+  perspective: 1000px;
+  width: 230px;
+  height: 370px;
+  margin: 0 auto 32px;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.card.revealed {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 12px;
+  background: #17140f;
+}
+
+.card-back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    repeating-linear-gradient(45deg,
+    transparent 0 9px, #c5a66a12 10px 11px),
+    #17140f;
+}
+
+.back-frame, .front-frame {
+  border: 1px solid #a88c57;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 10px;
+}
+
+.back-symbol {
+  color: var(--gold);
+  font-size: 100px;
+  align-self: center;
+  margin: auto;
+}
+
+.card-back small {
+  color: var(--gold);
+  font: 9px Arial, sans-serif;
+  letter-spacing: 4px;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: #e8ddc4;
+  color: #272015;
+  border-color: #b39763;
+}
+
+.front-frame {
+  border-color: #82704c;
+}
+
+.card-number {
+  font: 11px Arial, sans-serif;
+  letter-spacing: 3px;
+}
+
+.card-symbol {
+  font-size: 100px;
+  line-height: 1;
+  margin: auto;
+  color: #80633b;
+}
+
+.card-name {
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.card-category {
+  font: 8px Arial, sans-serif;
+  letter-spacing: 3px;
+}
+
+button {
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  padding: 16px 30px;
+  font: 10px Arial, sans-serif;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+button:hover {
+  background: var(--gold);
+  color: #090909;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+#result {
+  min-height: 180px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: .6s;
+  margin-top: 30px;
+}
+
+#result.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#result h2 {
+  color: var(--gold);
+  font-size: 27px;
+  font-weight: normal;
+  margin-bottom: 13px;
+}
+
+#result p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: #bcb5a5;
+  max-width: 450px;
+  margin: auto;
+}
+
+#result .category {
+  color: var(--muted);
+  font: 9px Arial, sans-serif;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.note {
+  font: 9px Arial, sans-serif;
+  letter-spacing: 2px;
+  color: #655f53;
+  margin-top: 40px;
+  line-height: 1.8;
+}
+
+footer {
+  border-top: 1px solid #28251f;
+  padding: 25px;
+  color: #777064;
+  font: 9px Arial, sans-serif;
+  letter-spacing: 3px;
+}
+
+@media(max-width:400px) {
+  .deck {
+    width: 205px;
+    height: 335px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="index.html">← FLWR HUB</a>
+  <span class="logo">FLWR®</span>
+  <span>001 / ARCANA</span>
+</header>
+
+<main>
+
+  <div class="eyebrow">THE DIGITAL ORACLE</div>
+
+  <h1>ARCANA</h1>
+
+  <p class="subtitle">
+    78 símbolos. Infinitas interpretaciones.
+    Una carta para contemplar aquello que habita en ti.
+  </p>
+
+  <div class="deck">
+    <div class="card" id="card">
+
+      <div class="face card-back">
+        <div class="back-frame">
+          <small>FLWR®</small>
+          <div class="back-symbol">✳</div>
+          <small>THE UNKNOWN</small>
+        </div>
+      </div>
+
+      <div class="face card-front">
+        <div class="front-frame">
+          <span class="card-number" id="number"></span>
+          <span class="card-symbol" id="symbol">☼</span>
+          <span class="card-name" id="visualName"></span>
+          <span class="card-category" id="visualCategory"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button id="drawButton" onclick="drawCard()">
+    REVELAR MI CARTA
+  </button>
+
+  <section id="result">
+    <div class="category" id="category"></div>
+    <h2 id="name"></h2>
+    <p id="meaning"></p>
+  </section>
+
+  <p class="note">
+    NO ES UNA PREDICCIÓN.<br>
+    ES UNA INVITACIÓN A LA REFLEXIÓN.
+  </p>
+
+</main>
+
+<footer>
+  FLWR® — AN EXPERIMENT IN SYMBOLISM
+</footer>
+
+<script>
+
+// 22 ARCANOS MAYORES
+
+const majors = [
+["El Loco","0","✧","El inicio de un viaje. Atrévete a explorar lo desconocido y permite que la curiosidad guíe tus pasos."],
+["El Mago","I","☿","Tienes herramientas y posibilidades a tu alcance. La intención se transforma en acción cuando decides crear."],
+["La Sacerdotisa","II","☾","Escucha tu intuición. Hay respuestas que aparecen en el silencio y conocimientos que todavía no han sido revelados."],
+["La Emperatriz","III","♧","La creatividad, la fertilidad y la abundancia encuentran espacio para crecer. Cuida aquello que estás cultivando."],
+["El Emperador","IV","♜","Es momento de establecer estructura, límites y dirección. Construye bases sólidas para lo que deseas desarrollar."],
+["El Hierofante","V","✥","El conocimiento también se hereda. Cuestiona las tradiciones, aprende de ellas y encuentra tu propia filosofía."],
+["Los Enamorados","VI","♡","Una elección importante requiere coherencia entre deseo, valores y conciencia. Reconoce aquello con lo que te comprometes."],
+["El Carro","VII","➤","La voluntad encuentra dirección. Avanza con determinación, pero no pierdas el equilibrio durante el recorrido."],
+["La Fuerza","VIII","∞","La verdadera fortaleza no siempre impone. La paciencia, la compasión y el dominio interior también son poder."],
+["El Ermitaño","IX","✧","Retírate un momento del ruido. La introspección puede revelar caminos que antes no conseguías observar."],
+["La Rueda de la Fortuna","X","◉","Todo se transforma. Reconoce los ciclos, acepta los cambios y comprende que ninguna etapa es permanente."],
+["La Justicia","XI","⚖","Observa tus decisiones con honestidad. Cada acción tiene consecuencias y toda elección merece responsabilidad."],
+["El Colgado","XII","♧","Cambiar de perspectiva puede transformar una situación. A veces avanzar requiere detenerse y mirar de otra manera."],
+["La Muerte","XIII","☠","El final de una etapa abre espacio para otra. Transformarse también significa dejar ir lo que ya cumplió su función."],
+["La Templanza","XIV","△","Encuentra equilibrio entre fuerzas opuestas. La integración y la paciencia pueden crear algo nuevo."],
+["El Diablo","XV","⛓","Examina tus apegos, deseos y dependencias. Reconocer aquello que te limita es el primer paso para recuperar autonomía."],
+["La Torre","XVI","⚡","Las estructuras frágiles pueden derrumbarse. Una ruptura también puede revelar una verdad necesaria."],
+["La Estrella","XVII","☆","La esperanza renace después de la incertidumbre. Recupera la confianza en tu capacidad de crear y sanar."],
+["La Luna","XVIII","☽","No todo es lo que parece. Explora tus emociones, incertidumbres y sueños antes de sacar conclusiones."],
+["El Sol","XIX","☼","Claridad, vitalidad y expresión. Reconoce lo que florece y permite que tu esencia se manifieste."],
+["El Juicio","XX","♢","Una nueva comprensión te invita a despertar. Revisa el pasado y decide qué versión de ti quieres construir."],
+["El Mundo","XXI","◎","Un ciclo alcanza su culminación. Integra lo aprendido y contempla el camino recorrido."]
+];
+
+// ARCANOS MENORES
+
+const suits = [
+{
+name:"Bastos",
+symbol:"♠",
+theme:"fuego, creatividad, energía y voluntad",
+meaning:"La energía creativa necesita dirección. Esta carta invita a reconocer tu impulso, tus proyectos y tu capacidad de actuar."
+},
+{
+name:"Copas",
+symbol:"♡",
+theme:"agua, emociones, vínculos e intuición",
+meaning:"Las emociones y los vínculos toman protagonismo. Observa tus sentimientos y la manera en que te relacionas."
+},
+{
+name:"Espadas",
+symbol:"⚔",
+theme:"aire, pensamiento, decisiones y verdad",
+meaning:"La mente, la comunicación y las decisiones requieren atención. Busca claridad antes de actuar."
+},
+{
+name:"Oros",
+symbol:"◇",
+theme:"tierra, materia, recursos y prosperidad",
+meaning:"La realidad material y el crecimiento a largo plazo están presentes. Cultiva con paciencia aquello que deseas construir."
+}
+];
+
+const ranks = [
+["As","un comienzo y una oportunidad"],
+["Dos","el equilibrio y la dualidad"],
+["Tres","la colaboración y el crecimiento"],
+["Cuatro","la estabilidad y la estructura"],
+["Cinco","el desafío y la adaptación"],
+["Seis","la armonía y el intercambio"],
+["Siete","la perseverancia y la evaluación"],
+["Ocho","la práctica y la transformación"],
+["Nueve","la culminación y la madurez"],
+["Diez","el cierre de un ciclo"],
+["Sota","la curiosidad y el descubrimiento"],
+["Caballero","el movimiento y la determinación"],
+["Reina","la integración y el dominio interior"],
+["Rey","la experiencia y la autoridad"]
+];
+
+const cards = majors.map((c,i)=>({
+name:c[0],
+number:c[1],
+symbol:c[2],
+category:"ARCANO MAYOR",
+meaning:c[3]
+}));
+
+suits.forEach(suit => {
+  ranks.forEach((rank,i) => {
+    cards.push({
+      name:rank[0]+" de "+suit.name,
+      number:i+1,
+      symbol:suit.symbol,
+      category:"ARCANO MENOR · "+suit.name.toUpperCase(),
+      meaning:"El "+rank[1]+" se expresa a través de "+suit.theme+". "+suit.meaning
+    });
+  });
+});
+
+// SISTEMA DE REVELACIÓN ALEATORIA
+
+let availableCards = [...cards];
+let currentCard = null;
+let isDrawing = false;
+
+function drawCard() {
+
+  if(isDrawing) return;
+
+  if(availableCards.length === 0) {
+    availableCards = [...cards];
+  }
+
+  isDrawing = true;
+
+  const card = document.getElementById("card");
+  const result = document.getElementById("result");
+  const button = document.getElementById("drawButton");
+
+  button.disabled = true;
+  result.classList.remove("visible");
+  card.classList.remove("revealed");
+
+  setTimeout(() => {
+
+    const randomIndex = Math.floor(
+      Math.random() * availableCards.length
+    );
+
+    currentCard = availableCards.splice(randomIndex,1)[0];
+
+    document.getElementById("number").textContent =
+      currentCard.number;
+
+    document.getElementById("symbol").textContent =
+      currentCard.symbol;
+
+    document.getElementById("visualName").textContent =
+      currentCard.name;
+
+    document.getElementById("visualCategory").textContent =
+      currentCard.category;
+
+    document.getElementById("category").textContent =
+      currentCard.category;
+
+    document.getElementById("name").textContent =
+      currentCard.name;
+
+    document.getElementById("meaning").textContent =
+      currentCard.meaning;
+
+    card.classList.add("revealed");
+
+    setTimeout(() => {
+      result.classList.add("visible");
+      button.disabled = false;
+      button.textContent = "REVELAR OTRA CARTA";
+      isDrawing = false;
+    },650);
+
+  },350);
+}
+
+</script>
+
+</body>
+</html>
